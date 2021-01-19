@@ -299,7 +299,6 @@ function executeTests(testDirPath, runOptions: Partial<RunOptions>) {
         // Run sync tests
         const syncTestsPromises: Array<Promise<any>> = []
         getTests(testDirPath)
-            .filter(function (test) { return !test.onlyCommandLine; })
             .filter(function (test) { return !test.onlyAsync })
             .filter(function (test) { return runOptions.singleTestName ? test.name === runOptions.singleTestName : true; })
             .filter(function (test) { return test.nodeVersionSupport === undefined || semver.satisfies(process.version, test.nodeVersionSupport) })
@@ -315,7 +314,7 @@ function executeTests(testDirPath, runOptions: Partial<RunOptions>) {
     }).then(function () {
         // Run async tests
         const asyncTestsPromises: Array<Promise<any>> = []
-        getTests(testDirPath).filter(function (test) { return !test.onlyCommandLine; })
+        getTests(testDirPath)
             .filter(function (test) { return !test.onlySync })
             .filter(function (test) { return test.nodeVersionSupport === undefined || semver.satisfies(process.version, test.nodeVersionSupport) })
             .filter(test => validatePlatform(test))
