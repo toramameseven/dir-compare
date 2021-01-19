@@ -8,7 +8,7 @@ import util = require('util')
 import fs = require('fs')
 import os = require('os')
 import temp = require('temp')
-import defaultPrint = require('../src/cli/print')
+import defaultPrint = require('./print')
 import Streams = require('memory-streams')
 import { compare as compareAsync, compareSync as compareSync, Statistics, Result } from "../src"
 import untar = require('./untar')
@@ -27,9 +27,6 @@ interface RunOptions {
 
     // Shows actual/expected for each test
     showResult: boolean,
-
-    // Do not run cli tests
-    skipCli: boolean,
 
     // Do not run async tests
     skipAsync: boolean,
@@ -234,56 +231,6 @@ const testAsync = function (test: Partial<Test>, testDirPath, saveReport, runOpt
         })
 }
 
-function testCommandLineInternal(test, testDirPath, async, saveReport, runOptions: Partial<RunOptions>) {
-    if (runOptions.skipCli) {
-        return Promise.resolve()
-    }
-    return new Promise(function (resolve, reject) {
-        const dircompareJs = pathUtils.normalize(__dirname + '/../src/cli/dircompare.js')
-        process.chdir(testDirPath)
-        let path1, path2
-        if (test.withRelativePath) {
-            path1 = test.path1
-            path2 = test.path2
-        } else {
-            path1 = test.path1 ? testDirPath + '/' + test.path1 : ''
-            path2 = test.path2 ? testDirPath + '/' + test.path2 : ''
-        }
-        const command = util.format("node %s %s %s %s %s",
-            dircompareJs, test.commandLineOptions, async ? '--async' : '', path1, path2)
-        const shelljsResult = shelljs.exec(command, {
-            silent: true
-        })
-        const output = normalize(shelljsResult.output).trim()
-        const exitCode = shelljsResult.code
-
-        const expectedExitCode = test.exitCode
-        let res
-        let expectedOutput
-        if (expectedExitCode === 2) {
-            // output not relevant for error codes
-            res = (exitCode === expectedExitCode)
-        } else {
-            expectedOutput = getExpected(test)
-            res = expectedOutput === output && (exitCode === expectedExitCode)
-        }
-        if (runOptions.showResult) {
-            printResult(output, expectedOutput)
-        }
-        const testDescription = 'command line ' + (async ? 'async' : 'sync')
-        report(test.name, testDescription, output, exitCode, res, saveReport)
-        console.log(test.name + ' ' + testDescription + ': ' + passed(res, 'cmdLine'))
-        resolve()
-    })
-}
-
-const testCommandLine = function (test, testDirPath, saveReport, runOptions: Partial<RunOptions>) {
-    return Promise.all([
-        testCommandLineInternal(test, testDirPath, false, saveReport, runOptions),
-        testCommandLineInternal(test, testDirPath, true, saveReport, runOptions)
-    ])
-}
-
 function printError(error) {
     return error instanceof Error ? error.stack : error
 }
@@ -324,7 +271,7 @@ const printResult = function (output, expected) {
 }
 
 function validatePlatform(test: Partial<Test>) {
-    if(!test.excludePlatform || test.excludePlatform.length===0) {
+    if (!test.excludePlatform || test.excludePlatform.length === 0) {
         return true
     }
 
@@ -336,7 +283,7 @@ function includes<T>(arr: T[], item: T): boolean {
 }
 
 function runCustomValidator(test: Partial<Test>, statistics: Statistics) {
-    if(!test.customValidator) {
+    if (!test.customValidator) {
         return true
     }
     return test.customValidator(statistics)
@@ -348,10 +295,11 @@ function executeTests(testDirPath, runOptions: Partial<RunOptions>) {
     console.log('Test dir: ' + testDirPath)
     const saveReport = !runOptions.noReport
     initReport(saveReport)
-    Promise.resolve(getTests(testDirPath)).then(function (tests) {
+    Promise.resolve().then(function () {
         // Run sync tests
         const syncTestsPromises: Array<Promise<any>> = []
-        tests.filter(function (test) { return !test.onlyCommandLine; })
+        getTests(testDirPath)
+            .filter(function (test) { return !test.onlyCommandLine; })
             .filter(function (test) { return !test.onlyAsync })
             .filter(function (test) { return runOptions.singleTestName ? test.name === runOptions.singleTestName : true; })
             .filter(function (test) { return test.nodeVersionSupport === undefined || semver.satisfies(process.version, test.nodeVersionSupport) })
@@ -381,20 +329,6 @@ function executeTests(testDirPath, runOptions: Partial<RunOptions>) {
         console.log('Async tests: ' + asyncCount + ', failed: ' + colors.yellow(asyncFailed.toString()) + ', succeeded: ' + colors.green(asyncSuccessful.toString()))
         console.log()
     }).then(function () {
-        // Run command line tests
-        const commandLinePromises: Array<Promise<any>> = []
-        getTests(testDirPath).filter(function (test) { return !test.onlyLibrary; })
-            .filter(function (test) { return test.nodeVersionSupport === undefined || semver.satisfies(process.version, test.nodeVersionSupport) })
-            .filter(test => validatePlatform(test))
-            .filter(function (test) { return runOptions.singleTestName ? test.name === runOptions.singleTestName : true; })
-            .forEach(function (test) {
-                commandLinePromises.push(testCommandLine(test, testDirPath, saveReport, runOptions))
-            })
-        return Promise.all(commandLinePromises)
-    }).then(function () {
-        console.log()
-        console.log('Command line tests: ' + cmdLineCount + ', failed: ' + colors.yellow(cmdLineFailed.toString()) + ', succeeded: ' + colors.green(cmdLineSuccessful.toString()))
-    }).then(function () {
         console.log()
         console.log('All tests: ' + count + ', failed: ' + colors.yellow(failed.toString()) + ', succeeded: ' + colors.green(successful.toString()))
         endReport(saveReport)
@@ -412,7 +346,6 @@ const main = function () {
     const runOptions: Partial<RunOptions> = {
         unpacked: false,
         showResult: false,
-        skipCli: false,
         skipAsync: false,
         noReport: false,
         singleTestName: undefined
@@ -423,9 +356,6 @@ const main = function () {
         }
         if (arg.match('showresult')) {
             runOptions.showResult = true
-        }
-        if (arg.match('skipcli')) {
-            runOptions.skipCli = true
         }
         if (arg.match('skipasync')) {
             runOptions.skipAsync = true

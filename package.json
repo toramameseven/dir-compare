@@ -30,8 +30,6 @@
     },
     "dependencies": {
         "buffer-equal": "1.0.0",
-        "colors": "1.0.3",
-        "commander": "2.9.0",
         "minimatch": "3.0.4"
     },
     "devDependencies": {
@@ -47,9 +45,6 @@
         "tslint-config-prettier": "^1.13.0",
         "typedoc": "0.19.2",
         "typescript": "^3.7.4"
-    },
-    "bin": {
-        "dircompare": "src/cli/dircompare.js"
     },
     "author": "Liviu Grigorescu",
     "license": "MIT",
