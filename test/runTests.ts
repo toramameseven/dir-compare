@@ -2,8 +2,6 @@ import { getTests, Test } from "./tests"
 import pjson = require('../package.json')
 
 import colors = require('colors/safe')
-import pathUtils = require('path')
-import shelljs = require('shelljs')
 import util = require('util')
 import fs = require('fs')
 import os = require('os')
@@ -15,7 +13,7 @@ import untar = require('./untar')
 import semver = require('semver')
 
 
-// Usage: node runTests [unpacked] [test001_1] [showresult] [skipcli] [skipasync] [noReport]
+// Usage: node runTests [unpacked] [test001_1] [showresult] [skipasync] [noReport]
 interface RunOptions {
     // Use ./testdir instead of testdir.tar as test data.
     // Run 'node extract.js' to initialize ./testdir.
@@ -158,7 +156,7 @@ const testSync = function (test, testDirPath, saveReport, runOptions: Partial<Ru
         path1 = test.path1 ? testDirPath + '/' + test.path1 : ''
         path2 = test.path2 ? testDirPath + '/' + test.path2 : ''
     }
-    return new Promise(function (resolve, reject) {
+    return new Promise(function (resolve) {
         resolve(compareSync(path1, path2, test.options))
     }).then(
         function (result: Result) {
