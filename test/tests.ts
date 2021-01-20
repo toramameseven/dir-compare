@@ -47,7 +47,7 @@ export interface Test {
 type Platform = 'aix' | 'android' | 'darwin' | 'freebsd' | 'linux' | 'openbsd' | 'sunos' | 'win32' | 'cygwin' | 'netbsd'
 
 export function getTests(testDirPath) {
-    const res: Array<Partial<Test>> = [
+    const res: Partial<Test>[] = [
         {
             name: 'test001_1', path1: 'd1', path2: 'd2',
             options: { compareSize: true, },

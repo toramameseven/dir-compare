@@ -295,7 +295,7 @@ function executeTests(testDirPath, runOptions: Partial<RunOptions>) {
     initReport(saveReport)
     Promise.resolve().then(function () {
         // Run sync tests
-        const syncTestsPromises: Array<Promise<any>> = []
+        const syncTestsPromises: Promise<any>[] = []
         getTests(testDirPath)
             .filter(function (test) { return !test.onlyAsync })
             .filter(function (test) { return runOptions.singleTestName ? test.name === runOptions.singleTestName : true; })
@@ -311,7 +311,7 @@ function executeTests(testDirPath, runOptions: Partial<RunOptions>) {
         console.log()
     }).then(function () {
         // Run async tests
-        const asyncTestsPromises: Array<Promise<any>> = []
+        const asyncTestsPromises: Promise<any>[] = []
         getTests(testDirPath)
             .filter(function (test) { return !test.onlySync })
             .filter(function (test) { return test.nodeVersionSupport === undefined || semver.satisfies(process.version, test.nodeVersionSupport) })
