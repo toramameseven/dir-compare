@@ -17,5 +17,5 @@ node_js:
 script:
   - node --version
   - npm --version
-  - npm run test fi;
+  - npm run test
   - if [[ ${TRAVIS_NODE_VERSION} == node && ${TRAVIS_OS_NAME} == linux ]]; then npm run coverage; codecov; fi;
