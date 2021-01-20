@@ -12,7 +12,7 @@ var print = function (res, writer, displayOptions) {
     // calculate relative path length for pretty print
     var relativePathMaxLength = 0, fileNameMaxLength = 0
     if (!displayOptions.csv && res.diffSet) {
-        res.diffSet.forEach(function (diff) {
+        res.diffSet.forEach(diff => {
             if (diff.relativePath.length > relativePathMaxLength) {
                 relativePathMaxLength = diff.relativePath.length
             }
