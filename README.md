@@ -184,9 +184,9 @@ Use [defaultFileCompare.js](https://github.com/gliviu/dir-compare/blob/master/sr
 ### Ignore line endings and white spaces
 Line based comparator can be used to ignore line ending and white space differences. This comparator is not available in [CLI](#command-line) mode.
 ```javascript
-var dircompare = require('dir-compare');
+const dircompare = require('dir-compare');
 
-var options = {
+const options = {
   compareContent: true,
   compareFileSync: dircompare.fileCompareHandlers.lineBasedFileCompare.compareSync,
   compareFileAsync: dircompare.fileCompareHandlers.lineBasedFileCompare.compareAsync,
@@ -194,9 +194,9 @@ var options = {
   ignoreWhiteSpaces: true
 };
 
-var path1 = '...';
-var path2 = '...';
-var res = dircompare.compareSync(path1, path2, options);
+const path1 = '...';
+const path2 = '...';
+const res = dircompare.compareSync(path1, path2, options);
 console.log(res)
 
 dircompare.compare(path1, path2, options)
@@ -209,7 +209,7 @@ Following example adds the possibility to ignore file extensions.
 import { Options, compare } from 'dir-compare'
 import path from 'path'
 
-var options: Options = {
+const options: Options = {
     compareSize: false,                    // compare only name by disabling size and content criteria
     compareContent: false,
     compareNameHandler: customNameCompare, // new name comparator used to ignore extensions
@@ -228,10 +228,10 @@ function customNameCompare(name1: string, name2: string, options: Options) {
     return ((name1 === name2) ? 0 : ((name1 > name2) ? 1 : -1))
 }
 
-var path1 = '/tmp/a';
-var path2 = '/tmp/b';
+const path1 = '/tmp/a';
+const path2 = '/tmp/b';
 
-var res = compare(path1, path2, options).then(res => {
+const res = compare(path1, path2, options).then(res => {
     console.log(`Same: ${res.same}`)
     if (!res.diffSet) {
         return
@@ -250,17 +250,17 @@ var res = compare(path1, path2, options).then(res => {
 If needed it can be replaced with custom implementation.
 
 ```javascript
-var dircompare = require("dircompare")
+const dircompare = require("dircompare")
 
-var customResultBuilder = function (entry1, entry2, state, level, relativePath, options, statistics, diffSet, reason) {
+const customResultBuilder = function (entry1, entry2, state, level, relativePath, options, statistics, diffSet, reason) {
     ...
 }
 
-var options = {
+const options = {
     compareSize: true,
     resultBuilder: customResultBuilder
 }
-var res = dircompare.compareSync('...', '...', options)
+const res = dircompare.compareSync('...', '...', options)
 
 ```
 
