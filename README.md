@@ -2,6 +2,8 @@ dir-compare
 ==========
 Node JS directory compare
 
+**!! Important !!** Starting with v3.0.0. the CLI utility has been moved to [dir-compare-cli](https://github.com/gliviu/dir-compare-cli). 
+
 [![Build Status](https://travis-ci.com/gliviu/dir-compare.svg?branch=master)](https://travis-ci.com/gliviu/dir-compare)
 [![Build status](https://ci.appveyor.com/api/projects/status/fpnqkr2gfg7pwkxk/branch/master?svg=true)](https://ci.appveyor.com/project/gliviu/dir-compare)
 [![codecov.io](http://codecov.io/github/gliviu/dir-compare/coverage.svg?branch=master)](http://codecov.io/github/gliviu/dir-compare?branch=master)
@@ -23,11 +25,6 @@ Node JS directory compare
 ```shell
 $ npm install dir-compare
 ```
-or
-```shell
-$ npm install -g dir-compare
-```
-for command line utility.
 
 # Library
 
@@ -287,58 +284,12 @@ These rules are applied in addition to the other comparison modes; ie. by conten
 If entries are different because of symlinks, `reason` will be `different-symlink`. Also statistics summarizes differences caused by symbolik links.
 
 # Command line
-```
-  Usage: dircompare [options] leftdir rightdir
-
-  Options:
-
-    -h, --help               output usage information
-    -V, --version            output the version number
-    -c, --compare-content    compare files by content
-    -D, --compare-date       compare files by date
-    --date-tolerance [type]  tolerance to be used in date comparison (milliseconds)
-    --compare-symlink        compare files and directories by symlink
-    -f, --filter [type]      file name filter
-    -x, --exclude [type]     file/directory name exclude filter
-    -S, --skip-subdirs       do not recurse into subdirectories
-    -L, --skip-symlinks      ignore symlinks
-    -i, --ignore-case        ignores case when comparing file names
-    -l, --show-left          report - show entries occurring in left dir
-    -r, --show-right         report - show entries occurring in right dir
-    -e, --show-equal         report - show identic entries occurring in both dirs
-    -d, --show-distinct      report - show distinct entries occurring in both dirs
-    -a, --show-all           report - show all entries
-    -w, --whole-report       report - include directories in detailed report
-    --reason                 report - show reason when entries are distinct
-    --csv                    report - print details as csv
-    --nocolors               don't use console colors
-    --async                  Make use of multiple cores
-
-  By default files are compared by size.
-  --date-tolerance defaults to 1000 ms. Two files are considered to have
-  the same date if the difference between their modification dates fits
-  within date tolerance.
-
-  Exit codes:
-    0 - entries are identical
-    1 - entries are different
-    2 - error occurred
-
-  Examples:
-  compare by content         dircompare -c dir1 dir2
-  show only different files  dircompare -d dir1 dir2
-
-  exclude filter             dircompare -x ".git,node_modules" dir1 dir2
-                             dircompare -x "/tests/expected" dir1 dir2
-                             dircompare -x "**/expected" dir1 dir2
-                             dircompare -x "**/tests/**/*.ts" dir1 dir2
-  
-  include filter             dircompare -f "*.js,*.yml" dir1 dir2
-                             dircompare -f "/tests/**/*.js" dir1 dir2
-                             dircompare -f "**/tests/**/*.ts" dir1 dir2
-```
+See [dir-compare-cli](https://github.com/gliviu/dir-compare-cli).
 
 # Changelog
+* v3.0.0 Cleanup dependencies
+  * Move CLI component into separate proejct [dir-compare-cli](https://github.com/gliviu/dir-compare-cli)
+  * Unpin dependencies
 * v2.4.0 New option to customize file/folder name comparison
 * v2.3.0 Fixes
 * v2.1.0 Removed [bluebird](https://github.com/petkaantonov/bluebird/#note) dependency
