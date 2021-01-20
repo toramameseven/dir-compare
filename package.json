@@ -29,8 +29,8 @@
         "docs": "typedoc --includeVersion --includeDeclarations --excludeExternals --theme minimal --mode file --readme none --gitRevision master --toc compare,compareSync,fileCompareHandlers,Options,Result --out docs ./src/index.d.ts"
     },
     "dependencies": {
-        "buffer-equal": "1.0.0",
-        "minimatch": "3.0.4"
+        "buffer-equal": "^1.0.0",
+        "minimatch": "^3.0.4"
     },
     "devDependencies": {
         "@types/node": "^12.11.7",
