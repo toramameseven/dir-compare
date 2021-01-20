@@ -1,5 +1,3 @@
-'use strict'
-
 var pathUtils = require('path')
 var entryType = require('../entry/entryType')
 
