@@ -287,9 +287,7 @@ If entries are different because of symlinks, `reason` will be `different-symlin
 See [dir-compare-cli](https://github.com/gliviu/dir-compare-cli).
 
 # Changelog
-* v3.0.0 Cleanup dependencies
-  * Moved CLI component into separate proejct [dir-compare-cli](https://github.com/gliviu/dir-compare-cli)
-  * Unpinned dependencies
+* v3.0.0 Moved CLI component into separate project [dir-compare-cli](https://github.com/gliviu/dir-compare-cli)
 * v2.4.0 New option to customize file/folder name comparison
 * v2.3.0 Fixes
 * v2.1.0 Removed [bluebird](https://github.com/petkaantonov/bluebird/#note) dependency
