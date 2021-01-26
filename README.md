@@ -4,7 +4,6 @@ Node JS directory compare
 
 **!! Important !!** Starting with v3.0.0. the CLI utility has been moved to [dir-compare-cli](https://github.com/gliviu/dir-compare-cli). 
 
-[![Build Status](https://travis-ci.com/gliviu/dir-compare.svg?branch=master)](https://travis-ci.com/gliviu/dir-compare)
 [![Build status](https://ci.appveyor.com/api/projects/status/fpnqkr2gfg7pwkxk/branch/master?svg=true)](https://ci.appveyor.com/project/gliviu/dir-compare)
 [![codecov.io](http://codecov.io/github/gliviu/dir-compare/coverage.svg?branch=master)](http://codecov.io/github/gliviu/dir-compare?branch=master)
 
