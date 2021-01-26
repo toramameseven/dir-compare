@@ -16,7 +16,8 @@ environment:
     # - nodejs_version: 13
     # - nodejs_version: 12
     - nodejs_version: 11
-    # - nodejs_version: 10
+      run_coverage: on
+    - nodejs_version: 10
     # - nodejs_version: 9
     # - nodejs_version: 8
 
@@ -42,8 +43,8 @@ for:
     test_script:
       - node --version
       - npm --version
-      - npm test
-      - npm run coverage
-      - npx codecov
+      - [[ -z "$run_coverage" ]] && npm test
+      - [[ -n "$run_coverage" ]] && npm run coverage
+      - [[ -n "$run_coverage" ]] && npx codecov
 
 build: off
