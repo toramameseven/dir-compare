@@ -15,10 +15,10 @@ environment:
     # - nodejs_version: "14"
     # - nodejs_version: "13"
     # - nodejs_version: "12"
-    # - nodejs_version: "11"
+    - nodejs_version: "11"
     # - nodejs_version: "10"
     # - nodejs_version: "9"
-    - nodejs_version: "8"
+    # - nodejs_version: "8"
 
 platform:
   - x86
@@ -38,7 +38,7 @@ for:
       only:
         - image: Ubuntu
     install:
-      - nvm use 8
+      - nvm use $env:nodejs_version
     test_script:
       - node --version
       - npm --version
