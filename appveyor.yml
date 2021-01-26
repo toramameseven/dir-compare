@@ -4,8 +4,8 @@ branches:
     - remove-cli
 image:
   - Visual Studio 2019
-  - Ubuntu
-  - macOS
+  # - Ubuntu
+  # - macOS
 init:
   - git config --global core.autocrlf true
 
@@ -24,13 +24,16 @@ platform:
   - x86
   - x64
 
-install:
-  - ps: Install-Product node $env:nodejs_version
+for:
+  - matrix:
+      only:
+        - image: Visual Studio 2019
+    install:
+      - ps: Install-Product node $env:nodejs_version
+    test_script:
+      - node --version
+      - npm --version
+      - npm test
+
 
 build: off
-
-test_script:
-  - node --version
-  - npm --version
-  - npm test
-
