@@ -43,8 +43,10 @@ for:
     test_script:
       - node --version
       - npm --version
-      - '[ -z "$run_coverage" ] && npm test'
-      - '[ ! -z "$run_coverage" ] && npm run coverage'
-      - '[ ! -z "$run_coverage" ] && npx codecov'
+      # - '[ -z "$run_coverage" ] && npm test'
+      # - '[ ! -z "$run_coverage" ] && npm run coverage'
+      # - '[ ! -z "$run_coverage" ] && npx codecov'
+      - npm run test
+      - if [[ ${nodejs_version} == 11 ]]; then npm run coverage; npx codecov; fi;
 
 build: off
