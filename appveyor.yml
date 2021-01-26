@@ -11,14 +11,14 @@ init:
 
 environment:
   matrix:
-    # - nodejs_version: "15"
-    # - nodejs_version: "14"
-    # - nodejs_version: "13"
-    # - nodejs_version: "12"
-    - nodejs_version: "11"
-    # - nodejs_version: "10"
-    # - nodejs_version: "9"
-    # - nodejs_version: "8"
+    # - nodejs_version: 15
+    # - nodejs_version: 14
+    # - nodejs_version: 13
+    # - nodejs_version: 12
+    - nodejs_version: 11
+    # - nodejs_version: 10
+    # - nodejs_version: 9
+    # - nodejs_version: 8
 
 platform:
   - x86
@@ -43,6 +43,7 @@ for:
       - node --version
       - npm --version
       - npm test
-
+      - npm run coverage
+      - npx codecov
 
 build: off
