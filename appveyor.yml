@@ -3,9 +3,9 @@ branches:
     - master
     - remove-cli
 image:
-  # - Visual Studio 2019
+  - Visual Studio 2019
   - Ubuntu
-  # - macOS
+  - macOS
 init:
   - git config --global core.autocrlf true
 
@@ -22,9 +22,18 @@ environment:
 
 platform:
   - x86
-  # - x64
+  - x64
 
 for:
+  - matrix:
+      only:
+        - image: macOS
+    install:
+      - nvm use $nodejs_version
+    test_script:
+      - node --version
+      - npm --version
+      - npm test
   - matrix:
       only:
         - image: Visual Studio 2019
