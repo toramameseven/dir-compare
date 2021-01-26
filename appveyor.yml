@@ -43,8 +43,8 @@ for:
     test_script:
       - node --version
       - npm --version
-      - [ -z "$run_coverage" ] && npm test
-      - [ -n "$run_coverage" ] && npm run coverage
-      - [ -n "$run_coverage" ] && npx codecov
+      - '[ -z "$run_coverage" ] && npm test'
+      - '[ -n "$run_coverage" ] && npm run coverage'
+      - '[ -n "$run_coverage" ] && npx codecov'
 
 build: off
