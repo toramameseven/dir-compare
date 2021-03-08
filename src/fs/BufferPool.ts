@@ -1,4 +1,4 @@
-interface BufferPair {
+export interface BufferPair {
     buf1: Buffer
     buf2: Buffer
     busy: boolean

@@ -1,4 +1,4 @@
-const compareSync = require('./compareSync')
+const compareSync = require('./compareSync').default
 const compareAsync = require('./compareAsync')
 
 /**
