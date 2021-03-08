@@ -8,7 +8,7 @@ interface BufferPair {
  * Collection of buffers to be shared between async processes.
  * Avoids allocating buffers each time async process starts.
  */
-export default class BufferPool {
+export class BufferPool {
     private readonly bufferPool: BufferPair[] = []
     /**
      * 

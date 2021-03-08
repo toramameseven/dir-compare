@@ -1,4 +1,4 @@
-import BufferPool from '../../fs/BufferPool'
+import { BufferPool} from '../../fs/BufferPool'
 
 const BUF_SIZE = 100000
 const MAX_CONCURRENT_FILE_COMPARE = 8
