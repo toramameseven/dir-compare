@@ -1,10 +1,10 @@
-const compareSync = require('./compareSync').default
-const compareAsync = require('./compareAsync').default
+import compareSync from './compareSync'
+import compareAsync from './compareAsync'
 
 /**
  * Compare files line by line with options to ignore
  * line endings and white space differences.
  */
-module.exports = {
+export default {
     compareSync, compareAsync
 }
