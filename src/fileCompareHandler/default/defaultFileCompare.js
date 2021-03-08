@@ -1,6 +1,6 @@
 const fs = require('fs')
 const bufferEqual = require('buffer-equal')
-const FileDescriptorQueue = require('../../fs/FileDescriptorQueue')
+const FileDescriptorQueue = require('../../fs/FileDescriptorQueue').FileDescriptorQueue
 const closeFilesSync = require('../common/closeFile').closeFilesSync
 const closeFilesAsync = require('../common/closeFile').closeFilesAsync
 const fsPromise = require('../../fs/fsPromise')
@@ -61,7 +61,7 @@ function compareAsync(path1, stat1, path2, stat2, options) {
     if (stat1.size !== stat2.size) {
         return Promise.resolve(false)
     }
-    return Promise.all([fdQueue.promises.open(path1, 'r'), fdQueue.promises.open(path2, 'r')])
+    return Promise.all([fdQueue.openPromise(path1, 'r'), fdQueue.openPromise(path2, 'r')])
         .then(fds => {
             bufferPair = bufferPool.allocateBuffers()
             fd1 = fds[0]

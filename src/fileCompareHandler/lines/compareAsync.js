@@ -2,10 +2,10 @@
  * Compare files line by line with options to ignore
  * line endings and white space differences.
  */
-const FileDescriptorQueue = require('../../fs/FileDescriptorQueue')
+const FileDescriptorQueue = require('../../fs/FileDescriptorQueue').FileDescriptorQueue
 const closeFilesAsync = require('../common/closeFile').closeFilesAsync
 const fsPromise = require('../../fs/fsPromise')
-const common = require('./common')
+const common = require('./common').default
 
 const fdQueue = new FileDescriptorQueue(common.MAX_CONCURRENT_FILE_COMPARE * 2)
 
@@ -14,7 +14,7 @@ module.exports = async function compareAsync(path1, stat1, path2, stat2, options
     const bufferSize = options.lineBasedHandlerBufferSize || common.BUF_SIZE
     let bufferPair
     try {
-        const fds = await Promise.all([fdQueue.promises.open(path1, 'r'), fdQueue.promises.open(path2, 'r')])
+        const fds = await Promise.all([fdQueue.openPromise(path1, 'r'), fdQueue.openPromise(path2, 'r')])
         bufferPair = common.bufferPool.allocateBuffers()
         fd1 = fds[0]
         fd2 = fds[1]

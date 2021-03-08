@@ -11,13 +11,13 @@ function closeFilesSync(fd1, fd2) {
 
 function closeFilesAsync(fd1, fd2, fdQueue) {
     if (fd1 && fd2) {
-        return fdQueue.promises.close(fd1).then(() => fdQueue.promises.close(fd2))
+        return fdQueue.closePromise(fd1).then(() => fdQueue.closePromise(fd2))
     }
     if (fd1) {
-        return fdQueue.promises.close(fd1)
+        return fdQueue.closePromise(fd1)
     }
     if (fd2) {
-        return fdQueue.promises.close(fd2)
+        return fdQueue.closePromise(fd2)
     }
 }
 
