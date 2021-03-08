@@ -6,6 +6,5 @@ const compareAsync = require('./compareAsync').default
  * line endings and white space differences.
  */
 module.exports = {
-    compareSync: compareSync,
-    compareAsync: compareAsync
+    compareSync, compareAsync
 }
