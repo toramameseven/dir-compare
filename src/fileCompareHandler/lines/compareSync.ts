@@ -51,7 +51,7 @@ function readLinesSync(fd: number, buf: Buffer, bufferSize: number, nextPosition
             return lines
         }
         chunk += buf.toString('utf8', 0, size)
-        lines = chunk.match(common.LINE_TOKENIZER_REGEXP) ?? []
+        lines = chunk.match(common.LINE_TOKENIZER_REGEXP) as string[]
         if (lines.length > 1) {
             return common.removeLastIncompleteLine(lines)
         }

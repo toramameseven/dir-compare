@@ -1,5 +1,5 @@
 const compareSync = require('./compareSync').default
-const compareAsync = require('./compareAsync')
+const compareAsync = require('./compareAsync').default
 
 /**
  * Compare files line by line with options to ignore
