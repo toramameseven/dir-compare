@@ -38,31 +38,6 @@ export default {
         }
     },
 
-    /**
-     * @deprecated
-     * @param lines 
-     * @param numberOfLines 
-     */
-    calculateSize(lines: string[], numberOfLines: number): number {
-        let size = 0
-        for (let i = 0; i < numberOfLines; i++) {
-            const line = lines[i]
-            size += line.length
-        }
-        return size
-    },
-
-    /**
-     * @deprecated
-     */
-    removeLastIncompleteLine(lines: string[]): string[] {
-        const lastLine = lines[lines.length - 1]
-        if (!lastLine.endsWith('\n')) {
-            return lines.slice(0, lines.length - 1)
-        }
-        return lines
-    },
-
     removeLastLine(lines: string[]): ReadLinesResult {
         const lastLine = lines[lines.length - 1]
         return {
@@ -71,20 +46,6 @@ export default {
             reachedEof: false
         }
     },
-
-    /**
-     * @deprecated
-     */
-    normalizeLastFileLine(lines: string[]): void {
-        if (lines.length === 0) {
-            return
-        }
-        const lastLine = lines[lines.length - 1]
-        if (!lastLine.endsWith('\n')) {
-            lines[lines.length - 1] = lastLine + '\n'
-        }
-    },
-
 }
 
 function compareLine(options: Options, line1: string, line2: string): boolean {

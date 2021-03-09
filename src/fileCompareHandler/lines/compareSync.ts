@@ -43,7 +43,6 @@ export default function compareSync(path1: string, stat1: fs.Stats, path2: strin
                 return true
             }
 
-
             restLines1 = compareResult.restLines1
             restLines2 = compareResult.restLines2
         }
