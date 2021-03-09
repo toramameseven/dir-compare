@@ -28,19 +28,22 @@ export default function compareSync(path1: string, stat1: fs.Stats, path2: strin
             rest1 = readResult1.rest
             rest2 = readResult2.rest
 
-            if (readResult1.reachedEof && readResult1.reachedEof) {
-                // End of file reached
-                return true
-            }
             const compareResult = common.compareLines(lines1, lines2, options)
             if (!compareResult.isEqual) {
                 return false
             }
 
-            const reachedEof = readResult1.reachedEof || readResult2.reachedEof
+            const reachedEof = readResult1.reachedEof && readResult2.reachedEof
             if(reachedEof && (compareResult.restLines1.length>0 || compareResult.restLines2.length>0)){
                 return false
             }
+
+            if (readResult1.reachedEof && readResult1.reachedEof) {
+                // End of file reached
+                return true
+            }
+
+
             restLines1 = compareResult.restLines1
             restLines2 = compareResult.restLines2
         }
