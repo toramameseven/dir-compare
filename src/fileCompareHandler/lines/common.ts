@@ -8,7 +8,7 @@ const MAX_CONCURRENT_FILE_COMPARE = 8
 
 const SPLIT_CONTENT_AND_LINE_ENDING_REGEXP = /([^\r\n]*)([\r\n]*)/
 const TRIM_WHITE_SPACES_REGEXP = /^[ \f\t\v\u00a0\u1680\u2000-\u200a\u2028\u2029\u202f\u205f\u3000\ufeff]+|[ \f\t\v\u00a0\u1680\u2000-\u200a\u2028\u2029\u202f\u205f\u3000\ufeff]+$/g
-const TRIM_LINE_ENDING_REGEXP = /\r\n$/g
+const TRIM_LINE_ENDING_REGEXP = /\r\n|\n$/g
 const REMOVE_WHITE_SPACES_REGEXP = /[ \f\t\v\u00a0\u1680\u2000-\u200a\u2028\u2029\u202f\u205f\u3000\ufeff]/g
 
 export default {
@@ -112,9 +112,8 @@ function trimSpaces(s: string): string {
     return trimmed + lineEnding
 }
 
-// Trims string like 'abc\r\n' into 'abc\n'
 function trimLineEnding(s: string): string {
-    return s.replace(TRIM_LINE_ENDING_REGEXP, '\n')
+    return s.replace(TRIM_LINE_ENDING_REGEXP, '')
 }
 
 function removeSpaces(s: string): string {
