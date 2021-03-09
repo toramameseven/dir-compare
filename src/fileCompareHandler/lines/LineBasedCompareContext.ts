@@ -1,4 +1,4 @@
-import { BufferPair } from '../../../fs/BufferPool'
+import { BufferPair } from '../../fs/BufferPool'
 
 interface RestPair {
     rest1: string
@@ -22,7 +22,7 @@ export class LineBasedCompareContext {
     /**
      * Buffers used as temporary storage.
      */
-    public bufferPair: BufferPair
+    public buffer: BufferPair
     /**
      * Part of a line that was split at buffer boundary in a previous read.
      * Will be prefixed to the next read.
@@ -37,6 +37,6 @@ export class LineBasedCompareContext {
     constructor(fd1: number, fd2: number, bufferPair: BufferPair) {
         this.fd1 = fd1
         this.fd2 = fd2
-        this.bufferPair = bufferPair
+        this.buffer = bufferPair
     }
 }

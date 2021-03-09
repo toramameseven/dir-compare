@@ -1,29 +1,33 @@
 import fs from 'fs'
 import { Options } from '../..'
 import closeFiles from '../common/closeFile'
-import common from './common/common'
-import { LineBasedCompareContext } from './common/LineBasedCompareContext'
-import { ReadLinesResult as LineBatch } from './common/ReadLinesResult'
-import { compareLineBatches } from './compareLineBatches'
-import { readBufferedLines } from './readBufferedLines'
+import { LineBasedCompareContext } from './LineBasedCompareContext'
+import { ReadLinesResult as LineBatch } from './readLines/ReadLinesResult'
+import { compareLineBatches } from './compare/compareLineBatches'
+import { readBufferedLines } from './readLines/readBufferedLines'
+import { BufferPair } from '../../fs/BufferPool'
+
+const BUF_SIZE = 100000
 
 const closeFilesSync = closeFiles.closeFilesSync
-
-const buf1 = Buffer.alloc(common.BUF_SIZE)
-const buf2 = Buffer.alloc(common.BUF_SIZE)
+const bufferPair: BufferPair = {
+    buf1: Buffer.alloc(BUF_SIZE),
+    buf2: Buffer.alloc(BUF_SIZE),
+    busy: true
+}
 
 export default function compareSync(path1: string, stat1: fs.Stats, path2: string, stat2: fs.Stats, options: Options): boolean {
-    const bufferSize = Math.min(common.BUF_SIZE, options.lineBasedHandlerBufferSize ?? Number.MAX_VALUE)
+    const bufferSize = Math.min(BUF_SIZE, options.lineBasedHandlerBufferSize ?? Number.MAX_VALUE)
     let context: LineBasedCompareContext | undefined
     try {
         context = new LineBasedCompareContext(
             fs.openSync(path1, 'r'),
             fs.openSync(path2, 'r'),
-            { buf1, buf2, busy: true }
+            bufferPair
         )
         for (; ;) {
-            const lineBatch1 = readLineBatchSync(context.fd1, context.bufferPair.buf1, bufferSize, context.rest.rest1, context.restLines.restLines1)
-            const lineBatch2 = readLineBatchSync(context.fd2, context.bufferPair.buf2, bufferSize, context.rest.rest2, context.restLines.restLines2)
+            const lineBatch1 = readLineBatchSync(context.fd1, context.buffer.buf1, bufferSize, context.rest.rest1, context.restLines.restLines1)
+            const lineBatch2 = readLineBatchSync(context.fd2, context.buffer.buf2, bufferSize, context.rest.rest2, context.restLines.restLines2)
             const compareResult = compareLineBatches(lineBatch1, lineBatch2, context, options)
             if (!compareResult.batchIsEqual) {
                 return false

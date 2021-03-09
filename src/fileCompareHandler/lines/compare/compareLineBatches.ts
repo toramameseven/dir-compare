@@ -1,7 +1,7 @@
-import { Options } from '../..';
-import common from './common/common';
-import { LineBasedCompareContext } from './common/LineBasedCompareContext';
-import { ReadLinesResult as LineBatch } from './common/ReadLinesResult';
+import { Options } from '../../..';
+import { LineBasedCompareContext } from '../LineBasedCompareContext';
+import { ReadLinesResult as LineBatch } from '../readLines/ReadLinesResult';
+import { compareLines } from './compareLines';
 
 export interface CompareLineBatchResult {
     reachedEof: boolean
@@ -21,7 +21,7 @@ export function compareLineBatches(lineBatch1: LineBatch, lineBatch2: LineBatch,
     context.rest.rest1 = lineBatch1.rest;
     context.rest.rest2 = lineBatch2.rest;
 
-    const compareResult = common.compareLines(lineBatch1.lines, lineBatch2.lines, options);
+    const compareResult = compareLines(lineBatch1.lines, lineBatch2.lines, options);
     if (!compareResult.isEqual) {
         return { batchIsEqual: false, reachedEof: false };
     }

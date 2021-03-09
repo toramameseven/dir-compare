@@ -1,47 +1,31 @@
-import { Options } from '../../..'
-import { CompareLinesResult } from './CompareLinesResult'
-import { ReadLinesResult } from './ReadLinesResult'
-
-const BUF_SIZE = 100000
+import { Options } from "../../.."
+import { CompareLinesResult } from "./CompareLinesResult"
 
 const SPLIT_CONTENT_AND_LINE_ENDING_REGEXP = /([^\r\n]*)([\r\n]*)/
 const TRIM_WHITE_SPACES_REGEXP = /^[ \f\t\v\u00a0\u1680\u2000-\u200a\u2028\u2029\u202f\u205f\u3000\ufeff]+|[ \f\t\v\u00a0\u1680\u2000-\u200a\u2028\u2029\u202f\u205f\u3000\ufeff]+$/g
 const TRIM_LINE_ENDING_REGEXP = /\r\n|\n$/g
 const REMOVE_WHITE_SPACES_REGEXP = /[ \f\t\v\u00a0\u1680\u2000-\u200a\u2028\u2029\u202f\u205f\u3000\ufeff]/g
 
-export default {
-    BUF_SIZE,
-    LINE_TOKENIZER_REGEXP: /[^\n]+\n?|\n/g,
-
-    compareLines(lines1: string[], lines2: string[], options: Options): CompareLinesResult {
-        if (options.ignoreEmptyLines) {
-            lines1 = removeEmptyLines(lines1)
-            lines2 = removeEmptyLines(lines2)
+export function compareLines(lines1: string[], lines2: string[], options: Options): CompareLinesResult {
+    if (options.ignoreEmptyLines) {
+        lines1 = removeEmptyLines(lines1)
+        lines2 = removeEmptyLines(lines2)
+    }
+    const len = Math.min(lines1.length, lines2.length)
+    let i = 0
+    for (; i < len; i++) {
+        const isEqual = compareLine(options, lines1[i], lines2[i])
+        if (!isEqual) {
+            return { isEqual: false, restLines1: [], restLines2: [] }
         }
-        const len = Math.min(lines1.length, lines2.length)
-        let i = 0
-        for (; i < len; i++) {
-            const isEqual = compareLine(options, lines1[i], lines2[i])
-            if (!isEqual) {
-                return { isEqual: false, restLines1: [], restLines2: [] }
-            }
-        }
-        return {
-            isEqual: true,
-            restLines1: lines1.slice(i),
-            restLines2: lines2.slice(i)
-        }
-    },
-
-    removeLastLine(lines: string[]): ReadLinesResult {
-        const lastLine = lines[lines.length - 1]
-        return {
-            lines: lines.slice(0, lines.length - 1),
-            rest: lastLine,
-            reachedEof: false
-        }
-    },
+    }
+    return {
+        isEqual: true,
+        restLines1: lines1.slice(i),
+        restLines2: lines2.slice(i)
+    }
 }
+
 
 function compareLine(options: Options, line1: string, line2: string): boolean {
     if (options.ignoreLineEnding) {
