@@ -1047,7 +1047,7 @@ export function getTests(testDirPath: string): Partial<Test>[] {
                 compareContent: true,
                 compareFileSync: fileCompareHandlers.lineBasedFileCompare.compareSync,
                 compareFileAsync: fileCompareHandlers.lineBasedFileCompare.compareAsync,
-                ignoreLineEnding: false,
+                ignoreLineEnding: true,
                 ignoreWhiteSpaces: false,
                 ignoreAllWhiteSpaces: false,
                 ignoreEmptyLines: true,
