@@ -28,12 +28,17 @@ export default function compareSync(path1: string, stat1: fs.Stats, path2: strin
             rest1 = readResult1.rest
             rest2 = readResult2.rest
 
-            if (lines1.length === 0 && lines2.length === 0) {
+            if (readResult1.reachedEof && readResult1.reachedEof) {
                 // End of file reached
                 return true
             }
             const compareResult = common.compareLines(lines1, lines2, options)
             if (!compareResult.isEqual) {
+                return false
+            }
+
+            const reachedEof = readResult1.reachedEof || readResult2.reachedEof
+            if(reachedEof && (compareResult.restLines1.length>0 || compareResult.restLines2.length>0)){
                 return false
             }
             restLines1 = compareResult.restLines1
@@ -55,16 +60,16 @@ function readLinesSync(fd: number, buf: Buffer, bufferSize: number, rest: string
     if (size === 0) {
         // end of file
         if(rest.length===0){
-            return { lines: [...restLines], rest: '' }
+            return { lines: [...restLines], rest: '' , reachedEof: true}
         }
-        return { lines: [...restLines, rest], rest: '' }
+        return { lines: [...restLines, rest], rest: '' , reachedEof: true}
     }
     const isEndOfFile = size < bufferSize
     const fileContent = rest + buf.toString('utf8', 0, size)
     const lines = [...restLines, ...fileContent.match(common.LINE_TOKENIZER_REGEXP) as string[]]
     if (isEndOfFile) {
         return {
-            lines, rest: ''
+            lines, rest: '', reachedEof: true
         }
     }
     return common.removeLastLine(lines)

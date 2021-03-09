@@ -23,9 +23,6 @@ export default {
             lines1 = removeEmptyLines(lines1)
             lines2 = removeEmptyLines(lines2)
         }
-        if((lines1.length===0 || lines2.length===0) && (lines1.length+lines2.length)>0){
-            return { isEqual: false, restLines1: [], restLines2: [] }
-        }
         const len = Math.min(lines1.length, lines2.length)
         let i = 0
         for (; i < len; i++) {
@@ -70,7 +67,8 @@ export default {
         const lastLine = lines[lines.length - 1]
         return {
             lines: lines.slice(0, lines.length - 1),
-            rest: lastLine
+            rest: lastLine,
+            reachedEof: false
         }
     },
 

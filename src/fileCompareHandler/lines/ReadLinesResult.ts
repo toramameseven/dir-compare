@@ -1,5 +1,6 @@
 
 export interface ReadLinesResult {
-    lines: string[];
-    rest: string;
+    lines: string[]
+    rest: string
+    reachedEof: boolean
 }
