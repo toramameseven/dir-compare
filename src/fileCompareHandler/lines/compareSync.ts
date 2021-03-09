@@ -1,8 +1,11 @@
 import fs from 'fs'
 import { Options } from '../..'
 import closeFiles from '../common/closeFile'
-import common from './common'
-import { ReadLinesResult } from './ReadLinesResult'
+import common from './common/common'
+import { LineBasedCompareContext } from './common/LineBasedCompareContext'
+import { ReadLinesResult as LineBatch } from './common/ReadLinesResult'
+import { compareLineBatches } from './compareLineBatches'
+import { readBufferedLines } from './readBufferedLines'
 
 const closeFilesSync = closeFiles.closeFilesSync
 
@@ -10,69 +13,43 @@ const buf1 = Buffer.alloc(common.BUF_SIZE)
 const buf2 = Buffer.alloc(common.BUF_SIZE)
 
 export default function compareSync(path1: string, stat1: fs.Stats, path2: string, stat2: fs.Stats, options: Options): boolean {
-    let fd1: number | undefined
-    let fd2: number | undefined
     const bufferSize = Math.min(common.BUF_SIZE, options.lineBasedHandlerBufferSize ?? Number.MAX_VALUE)
+    let context: LineBasedCompareContext | undefined
     try {
-        fd1 = fs.openSync(path1, 'r')
-        fd2 = fs.openSync(path2, 'r')
-        let rest1 = ''
-        let rest2 = ''
-        let restLines1: string[] = []
-        let restLines2: string[] = []
+        context = new LineBasedCompareContext(
+            fs.openSync(path1, 'r'),
+            fs.openSync(path2, 'r'),
+            { buf1, buf2, busy: true }
+        )
         for (; ;) {
-            const readResult1 = readLinesSync(fd1, buf1, bufferSize, rest1, restLines1)
-            const readResult2 = readLinesSync(fd2, buf2, bufferSize, rest2, restLines2)
-            const lines1 = readResult1.lines
-            const lines2 = readResult2.lines
-            rest1 = readResult1.rest
-            rest2 = readResult2.rest
-
-            const compareResult = common.compareLines(lines1, lines2, options)
-            if (!compareResult.isEqual) {
+            const lineBatch1 = readLineBatchSync(context.fd1, context.bufferPair.buf1, bufferSize, context.rest.rest1, context.restLines.restLines1)
+            const lineBatch2 = readLineBatchSync(context.fd2, context.bufferPair.buf2, bufferSize, context.rest.rest2, context.restLines.restLines2)
+            const compareResult = compareLineBatches(lineBatch1, lineBatch2, context, options)
+            if (!compareResult.batchIsEqual) {
                 return false
             }
-
-            const reachedEof = readResult1.reachedEof && readResult2.reachedEof
-            if(reachedEof && (compareResult.restLines1.length>0 || compareResult.restLines2.length>0)){
-                return false
+            if (compareResult.reachedEof) {
+                return compareResult.batchIsEqual
             }
-
-            if (readResult1.reachedEof && readResult1.reachedEof) {
-                // End of file reached
-                return true
-            }
-
-            restLines1 = compareResult.restLines1
-            restLines2 = compareResult.restLines2
         }
     } finally {
-        closeFilesSync(fd1, fd2)
+        closeFilesSync(context?.fd1, context?.fd2)
     }
 }
-
 
 /**
- * Read lines from file starting with current position.
- * Returns 0 lines if eof is reached, otherwise returns at least one complete line.
- * Incomplete line is returned as 'rest' parameter.
+ * Reads a batch of lines from file starting with current position.
+ * 
+ * @param fd File to read lines from.
+ * @param buf Buffer used as temporary line storage.
+ * @param bufferSize Allocated buffer size. The number of lines in the batch is limited by this size.
+ * @param rest Part of a line that was split at buffer boundary in a previous read.
+ *             Will be added to result.
+ * @param restLines Lines that remain unprocessed from a previous read.
+ *             Will be added to result.
  */
-function readLinesSync(fd: number, buf: Buffer, bufferSize: number, rest: string, restLines: string[]): ReadLinesResult {
+function readLineBatchSync(fd: number, buf: Buffer, bufferSize: number, rest: string, restLines: string[]): LineBatch {
     const size = fs.readSync(fd, buf, 0, bufferSize, null)
-    if (size === 0) {
-        // end of file
-        if(rest.length===0){
-            return { lines: [...restLines], rest: '' , reachedEof: true}
-        }
-        return { lines: [...restLines, rest], rest: '' , reachedEof: true}
-    }
-    const isEndOfFile = size < bufferSize
-    const fileContent = rest + buf.toString('utf8', 0, size)
-    const lines = [...restLines, ...fileContent.match(common.LINE_TOKENIZER_REGEXP) as string[]]
-    if (isEndOfFile) {
-        return {
-            lines, rest: '', reachedEof: true
-        }
-    }
-    return common.removeLastLine(lines)
+    return readBufferedLines(buf, size, bufferSize, rest, restLines)
 }
+

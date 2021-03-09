@@ -1,10 +1,8 @@
-import { Options } from '../..'
-import { BufferPool } from '../../fs/BufferPool'
+import { Options } from '../../..'
 import { CompareLinesResult } from './CompareLinesResult'
 import { ReadLinesResult } from './ReadLinesResult'
 
 const BUF_SIZE = 100000
-const MAX_CONCURRENT_FILE_COMPARE = 8
 
 const SPLIT_CONTENT_AND_LINE_ENDING_REGEXP = /([^\r\n]*)([\r\n]*)/
 const TRIM_WHITE_SPACES_REGEXP = /^[ \f\t\v\u00a0\u1680\u2000-\u200a\u2028\u2029\u202f\u205f\u3000\ufeff]+|[ \f\t\v\u00a0\u1680\u2000-\u200a\u2028\u2029\u202f\u205f\u3000\ufeff]+$/g
@@ -13,9 +11,6 @@ const REMOVE_WHITE_SPACES_REGEXP = /[ \f\t\v\u00a0\u1680\u2000-\u200a\u2028\u202
 
 export default {
     BUF_SIZE,
-    MAX_CONCURRENT_FILE_COMPARE,
-    bufferPool: new BufferPool(BUF_SIZE, MAX_CONCURRENT_FILE_COMPARE),  // fdQueue guarantees there will be no more than MAX_CONCURRENT_FILE_COMPARE async processes accessing the buffers concurrently
-
     LINE_TOKENIZER_REGEXP: /[^\n]+\n?|\n/g,
 
     compareLines(lines1: string[], lines2: string[], options: Options): CompareLinesResult {
