@@ -1,5 +1,7 @@
 import { Options } from '../..'
-import { BufferPool} from '../../fs/BufferPool'
+import { BufferPool } from '../../fs/BufferPool'
+import { CompareLinesResult } from './CompareLinesResult'
+import { ReadLinesResult } from './ReadLinesResult'
 
 const BUF_SIZE = 100000
 const MAX_CONCURRENT_FILE_COMPARE = 8
@@ -16,19 +18,34 @@ export default {
 
     LINE_TOKENIZER_REGEXP: /[^\n]+\n?|\n/g,
 
-    compareLines(lines1: string[], lines2: string[], options: Options): number {
-        let equalLines = 0
-        const len = lines1.length < lines2.length ? lines1.length : lines2.length
-        for (let i = 0; i < len; i++) {
+    compareLines(lines1: string[], lines2: string[], options: Options): CompareLinesResult {
+        if (options.ignoreEmptyLines) {
+            lines1 = removeEmptyLines(lines1)
+            lines2 = removeEmptyLines(lines2)
+        }
+        if((lines1.length===0 || lines2.length===0) && (lines1.length+lines2.length)>0){
+            return { isEqual: false, restLines1: [], restLines2: [] }
+        }
+        const len = Math.min(lines1.length, lines2.length)
+        let i = 0
+        for (; i < len; i++) {
             const isEqual = compareLine(options, lines1[i], lines2[i])
             if (!isEqual) {
-                return equalLines
+                return { isEqual: false, restLines1: [], restLines2: [] }
             }
-            equalLines++
         }
-        return equalLines
+        return {
+            isEqual: true,
+            restLines1: lines1.slice(i),
+            restLines2: lines2.slice(i)
+        }
     },
 
+    /**
+     * @deprecated
+     * @param lines 
+     * @param numberOfLines 
+     */
     calculateSize(lines: string[], numberOfLines: number): number {
         let size = 0
         for (let i = 0; i < numberOfLines; i++) {
@@ -38,6 +55,9 @@ export default {
         return size
     },
 
+    /**
+     * @deprecated
+     */
     removeLastIncompleteLine(lines: string[]): string[] {
         const lastLine = lines[lines.length - 1]
         if (!lastLine.endsWith('\n')) {
@@ -46,6 +66,17 @@ export default {
         return lines
     },
 
+    removeLastLine(lines: string[]): ReadLinesResult {
+        const lastLine = lines[lines.length - 1]
+        return {
+            lines: lines.slice(0, lines.length - 1),
+            rest: lastLine
+        }
+    },
+
+    /**
+     * @deprecated
+     */
     normalizeLastFileLine(lines: string[]): void {
         if (lines.length === 0) {
             return
@@ -90,4 +121,12 @@ function trimLineEnding(s: string): string {
 
 function removeSpaces(s: string): string {
     return s.replace(REMOVE_WHITE_SPACES_REGEXP, '')
+}
+
+function removeEmptyLines(lines: string[]): string[] {
+    return lines.filter(line => !isEmptyLine(line))
+}
+
+function isEmptyLine(line: string): boolean {
+    return line === '\n' || line === '\r\n'
 }

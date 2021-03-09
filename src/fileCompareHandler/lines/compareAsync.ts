@@ -15,38 +15,39 @@ const closeFilesAsync = closeFiles.closeFilesAsync
 const fdQueue = new FileDescriptorQueue(common.MAX_CONCURRENT_FILE_COMPARE * 2)
 
 export default async function compareAsync(path1: string, stat1: fs.Stats, path2: string, stat2: fs.Stats, options: Options): Promise<boolean> {
-    let fd1: number | undefined
-    let fd2: number | undefined
-    const bufferSize = options.lineBasedHandlerBufferSize || common.BUF_SIZE
-    let bufferPair: BufferPair | undefined
-    try {
-        const fds = await Promise.all([fdQueue.openPromise(path1, 'r'), fdQueue.openPromise(path2, 'r')])
-        bufferPair = common.bufferPool.allocateBuffers()
-        fd1 = fds[0]
-        fd2 = fds[1]
-        const buf1 = bufferPair.buf1
-        const buf2 = bufferPair.buf2
-        let nextPosition1 = 0, nextPosition2 = 0
-        for (; ;) {
-            const lines1 = await readLinesAsync(fd1, buf1, bufferSize, nextPosition1)
-            const lines2 = await readLinesAsync(fd2, buf2, bufferSize, nextPosition2)
-            if (lines1.length === 0 && lines2.length === 0) {
-                // End of file reached
-                return true
-            }
-            const equalLines = common.compareLines(lines1, lines2, options)
-            if (equalLines === 0) {
-                return false
-            }
-            nextPosition1 += common.calculateSize(lines1, equalLines)
-            nextPosition2 += common.calculateSize(lines2, equalLines)
-        }
-    } finally {
-        if (bufferPair) {
-            common.bufferPool.freeBuffers(bufferPair)
-        }
-        await closeFilesAsync(fd1, fd2, fdQueue)
-    }
+    return true
+    // let fd1: number | undefined
+    // let fd2: number | undefined
+    // const bufferSize = options.lineBasedHandlerBufferSize || common.BUF_SIZE
+    // let bufferPair: BufferPair | undefined
+    // try {
+    //     const fds = await Promise.all([fdQueue.openPromise(path1, 'r'), fdQueue.openPromise(path2, 'r')])
+    //     bufferPair = common.bufferPool.allocateBuffers()
+    //     fd1 = fds[0]
+    //     fd2 = fds[1]
+    //     const buf1 = bufferPair.buf1
+    //     const buf2 = bufferPair.buf2
+    //     let nextPosition1 = 0, nextPosition2 = 0
+    //     for (; ;) {
+    //         const lines1 = await readLinesAsync(fd1, buf1, bufferSize, nextPosition1)
+    //         const lines2 = await readLinesAsync(fd2, buf2, bufferSize, nextPosition2)
+    //         if (lines1.length === 0 && lines2.length === 0) {
+    //             // End of file reached
+    //             return true
+    //         }
+    //         const equalLines = common.compareLines(lines1, lines2, options)
+    //         if (equalLines === 0) {
+    //             return false
+    //         }
+    //         nextPosition1 += common.calculateSize(lines1, equalLines)
+    //         nextPosition2 += common.calculateSize(lines2, equalLines)
+    //     }
+    // } finally {
+    //     if (bufferPair) {
+    //         common.bufferPool.freeBuffers(bufferPair)
+    //     }
+    //     await closeFilesAsync(fd1, fd2, fdQueue)
+    // }
 }
 
 /**
