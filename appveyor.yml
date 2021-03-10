@@ -1,6 +1,7 @@
 branches:
   only:
     - master
+    - '#29'
 image:
   - Visual Studio 2019
   - Ubuntu
