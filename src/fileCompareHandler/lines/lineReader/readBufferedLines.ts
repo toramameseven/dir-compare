@@ -1,4 +1,4 @@
-import { ReadLinesResult } from './ReadLinesResult'
+import { LineBatch } from './LineBatch'
 
 
 const LINE_TOKENIZER_REGEXP = /[^\n]+\n?|\n/g
@@ -10,10 +10,10 @@ const LINE_TOKENIZER_REGEXP = /[^\n]+\n?|\n/g
  * @param allocatedBufferSize Maximum buffer storage.
  * @param rest Part of a line that was split at buffer boundary in a previous read.
  *             Will be added to result.
- * @param restLines Lines that remain unprocessed from a previous read.
+ * @param restLines Lines that remain unprocessed from a previous read due to unbalanced buffers.
  *             Will be added to result.
  */
-export function readBufferedLines(buf: Buffer, size: number, allocatedBufferSize: number, rest: string, restLines: string[]): ReadLinesResult {
+export function readBufferedLines(buf: Buffer, size: number, allocatedBufferSize: number, rest: string, restLines: string[]): LineBatch {
     if (size === 0 && rest.length === 0) {
         return { lines: [...restLines], rest: '', reachedEof: true }
     }
@@ -34,7 +34,13 @@ export function readBufferedLines(buf: Buffer, size: number, allocatedBufferSize
     return removeLastLine(lines)
 }
 
-function removeLastLine(lines: string[]): ReadLinesResult {
+/**
+ * Last line is usually incomplete because our buffer rarely matches exactly the end of a line.
+ * So we remove it from the line batch.
+ * The deleted line is returned as the 'rest' parameter and will be incorporate at the beginning 
+ * of next read operation.
+ */
+function removeLastLine(lines: string[]): LineBatch {
     const lastLine = lines[lines.length - 1]
     return {
         lines: lines.slice(0, lines.length - 1),

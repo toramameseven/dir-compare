@@ -2,14 +2,13 @@ import fs from 'fs'
 import { Options } from '../..'
 import closeFiles from '../../fs/closeFile'
 import { LineBasedCompareContext } from './LineBasedCompareContext'
-import { ReadLinesResult as LineBatch } from './readLines/ReadLinesResult'
 import { compareLineBatches } from './compare/compareLineBatches'
-import { readBufferedLines } from './readLines/readBufferedLines'
+import { readBufferedLines } from './lineReader/readBufferedLines'
 import { BufferPair } from '../../fs/BufferPool'
+import { LineBatch } from './lineReader/LineBatch'
 
 const BUF_SIZE = 100000
 
-const closeFilesSync = closeFiles.closeFilesSync
 const bufferPair: BufferPair = {
     buf1: Buffer.alloc(BUF_SIZE),
     buf2: Buffer.alloc(BUF_SIZE),
@@ -28,16 +27,23 @@ export default function compareSync(path1: string, stat1: fs.Stats, path2: strin
         for (; ;) {
             const lineBatch1 = readLineBatchSync(context.fd1, context.buffer.buf1, bufferSize, context.rest.rest1, context.restLines.restLines1)
             const lineBatch2 = readLineBatchSync(context.fd2, context.buffer.buf2, bufferSize, context.rest.rest2, context.restLines.restLines2)
-            const compareResult = compareLineBatches(lineBatch1, lineBatch2, context, options)
+
+            context.rest.rest1 = lineBatch1.rest
+            context.rest.rest2 = lineBatch2.rest
+        
+            const compareResult = compareLineBatches(lineBatch1, lineBatch2, options)
             if (!compareResult.batchIsEqual) {
                 return false
             }
             if (compareResult.reachedEof) {
                 return compareResult.batchIsEqual
             }
+
+            context.restLines.restLines1 = compareResult.restLines.restLines1
+            context.restLines.restLines2 = compareResult.restLines.restLines2
         }
     } finally {
-        closeFilesSync(context?.fd1, context?.fd2)
+        closeFiles.closeFilesSync(context?.fd1, context?.fd2)
     }
 }
 
