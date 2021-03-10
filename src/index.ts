@@ -15,10 +15,6 @@ const ROOT_PATH = pathUtils.sep
 
 export * from './types'
 
-/**
- * Available file content comparison handlers.
- * These handlers are used when [[Options.compareContent]] is set.
- */
 export interface FileCompareHandlers {
     /**
      * Default file content comparison handlers, used if [[Options.compareFileAsync]] or [[Options.compareFileSync]] are not specified.
@@ -38,6 +34,10 @@ export interface FileCompareHandlers {
     lineBasedFileCompare: CompareFileHandler
 }
 
+/**
+ * Available file content comparison handlers.
+ * These handlers are used when [[Options.compareContent]] is set.
+ */
 export const fileCompareHandlers: FileCompareHandlers = {
     defaultFileCompare: defaultFileCompare,
     lineBasedFileCompare: lineBasedFileCompare
