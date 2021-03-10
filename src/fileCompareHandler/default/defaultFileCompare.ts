@@ -3,7 +3,7 @@ import bufferEqual from 'buffer-equal'
 import { FileDescriptorQueue } from '../../fs/FileDescriptorQueue'
 import fsPromise from '../../fs/fsPromise'
 import { BufferPair, BufferPool } from '../../fs/BufferPool'
-import closeFile from '../common/closeFile'
+import closeFile from '../../fs/closeFile'
 import { Options } from '../..'
 
 const MAX_CONCURRENT_FILE_COMPARE = 8

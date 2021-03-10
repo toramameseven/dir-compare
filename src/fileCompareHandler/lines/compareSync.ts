@@ -1,6 +1,6 @@
 import fs from 'fs'
 import { Options } from '../..'
-import closeFiles from '../common/closeFile'
+import closeFiles from '../../fs/closeFile'
 import { LineBasedCompareContext } from './LineBasedCompareContext'
 import { ReadLinesResult as LineBatch } from './readLines/ReadLinesResult'
 import { compareLineBatches } from './compare/compareLineBatches'

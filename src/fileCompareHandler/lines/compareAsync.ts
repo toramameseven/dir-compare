@@ -3,7 +3,7 @@
  * line endings and white space differences.
  */
 import { FileDescriptorQueue } from '../../fs/FileDescriptorQueue'
-import closeFiles from '../common/closeFile'
+import closeFiles from '../../fs/closeFile'
 import fsPromise from '../../fs/fsPromise'
 import fs from 'fs'
 import { Options } from '../..'
