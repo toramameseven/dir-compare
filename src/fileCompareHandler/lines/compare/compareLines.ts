@@ -1,7 +1,6 @@
 import { Options } from "../../.."
 import { CompareLinesResult } from "./CompareLinesResult"
 
-const SPLIT_CONTENT_AND_LINE_ENDING_REGEXP = /([^\r\n]*)([\r\n]*)/
 const TRIM_WHITE_SPACES_REGEXP = /^[ \f\t\v\u00a0\u1680\u2000-\u200a\u2028\u2029\u202f\u205f\u3000\ufeff]+|[ \f\t\v\u00a0\u1680\u2000-\u200a\u2028\u2029\u202f\u205f\u3000\ufeff]+$/g
 const TRIM_LINE_ENDING_REGEXP = /\r\n|\n$/g
 const REMOVE_WHITE_SPACES_REGEXP = /[ \f\t\v\u00a0\u1680\u2000-\u200a\u2028\u2029\u202f\u205f\u3000\ufeff]/g
@@ -45,9 +44,7 @@ function compareLine(options: Options, line1: string, line2: string): boolean {
 
 // Trims string like '   abc   \n' into 'abc\n'
 function trimSpaces(s: string): string {
-    const matchResult = s.match(SPLIT_CONTENT_AND_LINE_ENDING_REGEXP) as string[]
-    const content = matchResult[1]
-    const lineEnding = matchResult[2]
+    const { content, lineEnding } = separateEol(s)
     const trimmed = content.replace(TRIM_WHITE_SPACES_REGEXP, '')
     return trimmed + lineEnding
 }
@@ -66,4 +63,24 @@ function removeEmptyLines(lines: string[]): string[] {
 
 function isEmptyLine(line: string): boolean {
     return line === '\n' || line === '\r\n'
+}
+
+function separateEol(s: string) {
+    const len = s.length
+    let lineEnding = ''
+    let content = s
+    if (s[len - 1] === '\n') {
+        if (s[len - 2] === '\r') {
+            return {
+                lineEnding: '\r\n',
+                content: s.slice(0, len - 2)
+            }
+        } 
+        
+        {
+            lineEnding = '\n'
+            content = s.slice(0, len - 1)
+        }
+    }
+    return { content, lineEnding }
 }
