@@ -1,6 +1,7 @@
 branches:
   only:
     - master
+    - test-ci
 image:
   - Visual Studio 2019
   - Ubuntu
@@ -10,12 +11,6 @@ init:
 
 environment:
   matrix:
-    - nodejs_version: 15
-    - nodejs_version: 14
-    - nodejs_version: 13
-    - nodejs_version: 12
-    - nodejs_version: 11
-    - nodejs_version: 10
     - nodejs_version: 9
     - nodejs_version: 8
 
