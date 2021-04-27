@@ -15,10 +15,20 @@ function getEntries(rootEntry, relativePath, loopDetected, options) {
         return []
     }
     if (rootEntry.isDirectory) {
-        const entries = fs.readdirSync(rootEntry.absolutePath)
-        return entryBuilder.buildDirEntries(rootEntry, entries, relativePath, options)
+        try {
+            const entries = fs.readdirSync(rootEntry.absolutePath)
+            return {
+                entries: entryBuilder.buildDirEntries(rootEntry, entries, relativePath, options),
+                permissionDenied: false
+            }
+        } catch (error) {
+            if (error.code === 'EACCES') {
+                return { entries: [], permissionDenied: true }
+            }
+
+        }
     }
-    return [rootEntry]
+    return { entries: [rootEntry], permissionDenied: false }
 }
 
 /**
@@ -29,8 +39,15 @@ function compare(rootEntry1, rootEntry2, level, relativePath, options, statistic
     const loopDetected2 = loopDetector.detectLoop(rootEntry2, symlinkCache.dir2)
     loopDetector.updateSymlinkCache(symlinkCache, rootEntry1, rootEntry2, loopDetected1, loopDetected2)
 
-    const entries1 = getEntries(rootEntry1, relativePath, loopDetected1, options)
-    const entries2 = getEntries(rootEntry2, relativePath, loopDetected2, options)
+    const entriesResult1 = getEntries(rootEntry1, relativePath, loopDetected1, options)
+    const entriesResult2 = getEntries(rootEntry2, relativePath, loopDetected2, options)
+
+    const entries1 = entriesResult1.entries
+    const entries2 = entriesResult2.entries
+    compareInternal(entries1, entries2, level, relativePath, options, statistics, diffSet, symlinkCache)
+}
+
+function compareInternal(entries1, entries2, level, relativePath, options, statistics, diffSet, symlinkCache) {
     let i1 = 0, i2 = 0
     while (i1 < entries1.length || i2 < entries2.length) {
         const entry1 = entries1[i1]
@@ -65,7 +82,10 @@ function compare(rootEntry1, rootEntry2, level, relativePath, options, statistic
             i1++
             i2++
             if (!options.skipSubdirs && type1 === 'directory') {
-                compare(entry1, entry2, level + 1, pathUtils.join(relativePath, entry1.name), options, statistics, diffSet, loopDetector.cloneSymlinkCache(symlinkCache))
+                const { loopDetected1, loopDetected2, clonedSymlinkCache } = detectLoops(symlinkCache, entry1, entry2)
+                const entriesResult1 = getEntries(entry1, pathUtils.join(relativePath, entry1.name), loopDetected1, options)
+                const entriesResult2 = getEntries(entry2, pathUtils.join(relativePath, entry2.name), loopDetected2, options)
+                compareInternal(entriesResult1.entries, entriesResult2.entries, level + 1, pathUtils.join(relativePath, entry1.name), options, statistics, diffSet, clonedSymlinkCache)
             }
         } else if (cmp < 0) {
             // Right missing
@@ -73,7 +93,9 @@ function compare(rootEntry1, rootEntry2, level, relativePath, options, statistic
             stats.updateStatisticsLeft(entry1, type1, statistics, options)
             i1++
             if (type1 === 'directory' && !options.skipSubdirs) {
-                compare(entry1, undefined, level + 1, pathUtils.join(relativePath, entry1.name), options, statistics, diffSet, loopDetector.cloneSymlinkCache(symlinkCache))
+                const { loopDetected1, clonedSymlinkCache } = detectLoops(symlinkCache, entry1, entry2)
+                const entriesResult1 = getEntries(entry1, pathUtils.join(relativePath, entry1.name), loopDetected1, options)
+                compareInternal(entriesResult1.entries, [], level + 1, pathUtils.join(relativePath, entry1.name), options, statistics, diffSet, clonedSymlinkCache)
             }
         } else {
             // Left missing
@@ -81,10 +103,20 @@ function compare(rootEntry1, rootEntry2, level, relativePath, options, statistic
             stats.updateStatisticsRight(entry2, type2, statistics, options)
             i2++
             if (type2 === 'directory' && !options.skipSubdirs) {
-                compare(undefined, entry2, level + 1, pathUtils.join(relativePath, entry2.name), options, statistics, diffSet, loopDetector.cloneSymlinkCache(symlinkCache))
+                const { loopDetected2, clonedSymlinkCache } = detectLoops(symlinkCache, entry1, entry2)
+                const entriesResult2 = getEntries(entry2, pathUtils.join(relativePath, entry2.name), loopDetected2, options)
+                compareInternal([], entriesResult2.entries, level + 1, pathUtils.join(relativePath, entry2.name), options, statistics, diffSet, clonedSymlinkCache)
             }
         }
     }
+}
+
+function detectLoops(symlinkCache, entry1, entry2) {
+    const clonedSymlinkCache = loopDetector.cloneSymlinkCache(symlinkCache)
+    const loopDetected1 = loopDetector.detectLoop(entry1, clonedSymlinkCache.dir1)
+    const loopDetected2 = loopDetector.detectLoop(entry2, clonedSymlinkCache.dir2)
+    loopDetector.updateSymlinkCache(clonedSymlinkCache, entry1, entry2, loopDetected1, loopDetected2)
+    return { loopDetected1, loopDetected2, clonedSymlinkCache }
 }
 
 module.exports = compare
