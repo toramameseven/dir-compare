@@ -45,6 +45,7 @@ function compare(rootEntry1, rootEntry2, level, relativePath, options, statistic
     const entries1 = entriesResult1.entries
     const entries2 = entriesResult2.entries
     compareInternal(entries1, entries2, level, relativePath, options, statistics, diffSet, symlinkCache)
+    // todo 453: handle permission denied 
 }
 
 function compareInternal(entries1, entries2, level, relativePath, options, statistics, diffSet, symlinkCache) {
@@ -74,17 +75,39 @@ function compareInternal(entries1, entries2, level, relativePath, options, stati
         if (cmp === 0) {
             // Both left/right exist and have the same name and type
             let compareEntryRes = entryEquality.isEntryEqualSync(entry1, entry2, type1, options)
+            i1++
+            i2++
+
+            let entriesResult1, entriesResult2, clonedSymlinkCache
+            if (!options.skipSubdirs && type1 === 'directory') {
+                const { loopDetected1, loopDetected2, symlinkCache } = detectLoops(symlinkCache, entry1, entry2)
+                entriesResult1 = getEntries(entry1, pathUtils.join(relativePath, entry1.name), loopDetected1, options)
+                entriesResult2 = getEntries(entry2, pathUtils.join(relativePath, entry2.name), loopDetected2, options)
+                clonedSymlinkCache = symlinkCache
+            }
+
+            if (entriesResult1.permissionDenied || entriesResult2.permissionDenied) {
+                options.resultBuilder(entry1, entry2, 'distinct',
+                    level, relativePath, options, statistics, diffSet, 'permission-denied')
+                continue
+            }
             options.resultBuilder(entry1, entry2,
                 compareEntryRes.same ? 'equal' : 'distinct',
                 level, relativePath, options, statistics, diffSet,
                 compareEntryRes.reason)
             stats.updateStatisticsBoth(entry1, entry2, compareEntryRes.same, compareEntryRes.reason, type1, statistics, options)
-            i1++
-            i2++
+
+
             if (!options.skipSubdirs && type1 === 'directory') {
                 const { loopDetected1, loopDetected2, clonedSymlinkCache } = detectLoops(symlinkCache, entry1, entry2)
                 const entriesResult1 = getEntries(entry1, pathUtils.join(relativePath, entry1.name), loopDetected1, options)
                 const entriesResult2 = getEntries(entry2, pathUtils.join(relativePath, entry2.name), loopDetected2, options)
+
+                if (entriesResult1.permissionDenied || entriesResult2.permissionDenied) {
+                    options.resultBuilder(entry1, entry2, 'distinct',
+                        level, relativePath, options, statistics, diffSet, 'permission-denied')
+                    continue
+                }
                 compareInternal(entriesResult1.entries, entriesResult2.entries, level + 1, pathUtils.join(relativePath, entry1.name), options, statistics, diffSet, clonedSymlinkCache)
             }
         } else if (cmp < 0) {
@@ -95,6 +118,11 @@ function compareInternal(entries1, entries2, level, relativePath, options, stati
             if (type1 === 'directory' && !options.skipSubdirs) {
                 const { loopDetected1, clonedSymlinkCache } = detectLoops(symlinkCache, entry1, entry2)
                 const entriesResult1 = getEntries(entry1, pathUtils.join(relativePath, entry1.name), loopDetected1, options)
+                if (entriesResult1.permissionDenied) {
+                    options.resultBuilder(entry1, entry2, 'distinct',
+                        level, relativePath, options, statistics, diffSet, 'permission-denied')
+                    continue
+                }
                 compareInternal(entriesResult1.entries, [], level + 1, pathUtils.join(relativePath, entry1.name), options, statistics, diffSet, clonedSymlinkCache)
             }
         } else {
