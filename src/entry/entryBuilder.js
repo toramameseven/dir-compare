@@ -32,8 +32,8 @@ module.exports = {
 		const stats = getStatIgnoreBrokenLink(absolutePath)
 		const isDirectory = stats.stat.isDirectory()
 
-		let isPermissionDenied = true
-		if(options.handlePermissionDenied){
+		let isPermissionDenied = false
+		if (options.handlePermissionDenied) {
 			const isFile = !isDirectory
 			isPermissionDenied = checkPermissionDenied(absolutePath, isFile, options)
 		}
@@ -55,14 +55,14 @@ module.exports = {
 
 
 function checkPermissionDenied(absolutePath, isFile, options) {
-	if(isFile && !options.compareContent){
-		return true
+	if (isFile && !options.compareContent) {
+		return false
 	}
-	let permissionDenied = false
 	try {
 		fs.accessSync(absolutePath, fs.constants.R_OK)
+		return false
 	} catch {
-		permissionDenied = true
+		return true
 	}
 }
 

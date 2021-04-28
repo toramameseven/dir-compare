@@ -15,6 +15,9 @@ function getEntries(rootEntry, relativePath, loopDetected, options) {
         return []
     }
     if (rootEntry.isDirectory) {
+        if(rootEntry.isPermissionDenied){
+            return []
+        }
         const entries = fs.readdirSync(rootEntry.absolutePath)
         return entryBuilder.buildDirEntries(rootEntry, entries, relativePath, options)
     }
