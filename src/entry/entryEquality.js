@@ -43,10 +43,6 @@ function isFileEqualSync(entry1, entry2, options) {
     if (options.compareDate && !isDateEqual(entry1.stat.mtime, entry2.stat.mtime, options.dateTolerance)) {
         return { same: false, reason: 'different-date' }
     }
-    const isPermissionDenied = entry1.isPermissionDenied || entry2.isPermissionDenied
-    if (options.compareContent && isPermissionDenied) {
-        return { same: false, reason: 'permission-denied' }
-    }
     if (options.compareContent && !options.compareFileSync(p1, entry1.stat, p2, entry2.stat, options)) {
         return { same: false, reason: 'different-content' }
     }
@@ -65,11 +61,6 @@ function isFileEqualAsync(entry1, entry2, type, diffSet, options) {
 
     if (options.compareDate && !isDateEqual(entry1.stat.mtime, entry2.stat.mtime, options.dateTolerance)) {
         return { same: false, samePromise: undefined, reason: 'different-date' }
-    }
-
-    const isPermissionDenied = entry1.isPermissionDenied || entry2.isPermissionDenied
-    if (options.compareContent && isPermissionDenied) {
-        return { same: false, reason: 'permission-denied' }
     }
 
     if (options.compareContent) {
@@ -106,9 +97,6 @@ function isFileEqualAsync(entry1, entry2, type, diffSet, options) {
 }
 
 function isDirectoryEqual(entry1, entry2, options) {
-    if (entry1.isPermissionDenied || entry2.isPermissionDenied) {
-        return { same: false, reason: 'permission-denied' }
-    }
     if (options.compareSymlink && !isSymlinkEqual(entry1, entry2)) {
         return { same: false, reason: 'different-symlink' }
     }

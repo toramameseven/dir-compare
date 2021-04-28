@@ -15,7 +15,7 @@ function getEntries(rootEntry, relativePath, loopDetected, options) {
         return []
     }
     if (rootEntry.isDirectory) {
-        if(rootEntry.isPermissionDenied){
+        if (rootEntry.isPermissionDenied) {
             return []
         }
         const entries = fs.readdirSync(rootEntry.absolutePath)
@@ -59,12 +59,18 @@ function compare(rootEntry1, rootEntry2, level, relativePath, options, statistic
         // process entry
         if (cmp === 0) {
             // Both left/right exist and have the same name and type
-            let compareEntryRes = entryEquality.isEntryEqualSync(entry1, entry2, type1, options)
-            options.resultBuilder(entry1, entry2,
-                compareEntryRes.same ? 'equal' : 'distinct',
-                level, relativePath, options, statistics, diffSet,
-                compareEntryRes.reason)
-            stats.updateStatisticsBoth(entry1, entry2, compareEntryRes.same, compareEntryRes.reason, type1, statistics, options)
+            let same = false, reason, state
+            if (entry1.isPermissionDenied || entry2.isPermissionDenied) {
+                state = "permission-denied"
+            } else {
+                const compareEntryRes = entryEquality.isEntryEqualSync(entry1, entry2, type1, options)
+                state = compareEntryRes.same ? 'equal' : 'distinct'
+                same = compareEntryRes.same
+                reason = compareEntryRes.reason
+            }
+
+            options.resultBuilder(entry1, entry2, state, level, relativePath, options, statistics, diffSet, reason)
+            stats.updateStatisticsBoth(entry1, entry2, same, reason, type1, statistics, options)
             i1++
             i2++
             if (!options.skipSubdirs && type1 === 'directory') {
@@ -72,7 +78,11 @@ function compare(rootEntry1, rootEntry2, level, relativePath, options, statistic
             }
         } else if (cmp < 0) {
             // Right missing
-            options.resultBuilder(entry1, undefined, 'left', level, relativePath, options, statistics, diffSet)
+            let state = 'left'
+            if (entry1.isPermissionDenied) {
+                state = "permission-denied"
+            }
+            options.resultBuilder(entry1, undefined, state, level, relativePath, options, statistics, diffSet)
             stats.updateStatisticsLeft(entry1, type1, statistics, options)
             i1++
             if (type1 === 'directory' && !options.skipSubdirs) {
@@ -80,7 +90,11 @@ function compare(rootEntry1, rootEntry2, level, relativePath, options, statistic
             }
         } else {
             // Left missing
-            options.resultBuilder(undefined, entry2, 'right', level, relativePath, options, statistics, diffSet)
+            let state = 'right'
+            if (entry2.isPermissionDenied) {
+                state = "permission-denied"
+            }
+            options.resultBuilder(undefined, entry2, state, level, relativePath, options, statistics, diffSet)
             stats.updateStatisticsRight(entry2, type2, statistics, options)
             i2++
             if (type2 === 'directory' && !options.skipSubdirs) {
