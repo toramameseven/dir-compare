@@ -16,7 +16,7 @@ module.exports = {
 			const entryAbsolutePath = rootEntry.absolutePath + PATH_SEP + entryName
 			const entryPath = rootEntry.path + PATH_SEP + entryName
 
-			const entry = this.buildEntry(entryAbsolutePath, entryPath, entryName)
+			const entry = this.buildEntry(entryAbsolutePath, entryPath, entryName, options)
 			if (options.skipSymlinks && entry.isSymlink) {
 				entry.stat = undefined
 			}
@@ -28,8 +28,15 @@ module.exports = {
 		return res.sort((a, b) => entryComparator.compareEntry(a, b, options))
 	},
 
-	buildEntry (absolutePath, path, name) {
+	buildEntry(absolutePath, path, name, options) {
 		const stats = getStatIgnoreBrokenLink(absolutePath)
+		const isDirectory = stats.stat.isDirectory()
+
+		let isPermissionDenied = true
+		if(options.handlePermissionDenied){
+			const isFile = !isDirectory
+			isPermissionDenied = checkPermissionDenied(absolutePath, isFile, options)
+		}
 
 		return {
 			name: name,
@@ -39,12 +46,25 @@ module.exports = {
 			lstat: stats.lstat,
 			isSymlink: stats.lstat.isSymbolicLink(),
 			isBrokenLink: stats.isBrokenLink,
-			isDirectory: stats.stat.isDirectory()
+			isDirectory,
+			isPermissionDenied
 		}
 	},
 
 }
 
+
+function checkPermissionDenied(absolutePath, isFile, options) {
+	if(isFile && !options.compareContent){
+		return true
+	}
+	let permissionDenied = false
+	try {
+		fs.accessSync(absolutePath, fs.constants.R_OK)
+	} catch {
+		permissionDenied = true
+	}
+}
 
 function getStatIgnoreBrokenLink(absolutePath) {
 	const lstat = fs.lstatSync(absolutePath)
