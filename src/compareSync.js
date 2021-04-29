@@ -77,7 +77,7 @@ function compare(rootEntry1, rootEntry2, level, relativePath, options, statistic
                 reason = compareEntryRes.reason
             }
 
-            options.resultBuilder(entry1, entry2, state, permissionDeniedState, level, relativePath, options, statistics, diffSet, reason)
+            options.resultBuilder(entry1, entry2, state, level, relativePath, options, statistics, diffSet, reason, permissionDeniedState)
             stats.updateStatisticsBoth(entry1, entry2, same, reason, type1, permissionDeniedState, statistics, options)
             i1++
             i2++
@@ -90,7 +90,7 @@ function compare(rootEntry1, rootEntry2, level, relativePath, options, statistic
             if (entry1.isPermissionDenied) {
                 permissionDeniedState = "left"
             }
-            options.resultBuilder(entry1, undefined, 'left', permissionDeniedState, level, relativePath, options, statistics, diffSet)
+            options.resultBuilder(entry1, undefined, 'left', level, relativePath, options, statistics, diffSet, undefined, permissionDeniedState)
             stats.updateStatisticsLeft(entry1, type1, permissionDeniedState, statistics, options)
             i1++
             if (type1 === 'directory' && !options.skipSubdirs) {
@@ -102,7 +102,7 @@ function compare(rootEntry1, rootEntry2, level, relativePath, options, statistic
             if (entry2.isPermissionDenied) {
                 permissionDeniedState = "right"
             }
-            options.resultBuilder(undefined, entry2, "right", permissionDeniedState, level, relativePath, options, statistics, diffSet)
+            options.resultBuilder(undefined, entry2, "right", level, relativePath, options, statistics, diffSet, undefined, permissionDeniedState)
             stats.updateStatisticsRight(entry2, type2, permissionDeniedState, statistics, options)
             i2++
             if (type2 === 'directory' && !options.skipSubdirs) {

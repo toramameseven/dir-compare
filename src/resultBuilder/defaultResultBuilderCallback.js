@@ -1,7 +1,7 @@
 const pathUtils = require('path')
 const entryType = require('../entry/entryType')
 
-module.exports = function (entry1, entry2, state, permissionDeniedState, level, relativePath, options, statistics, diffSet, reason) {
+module.exports = function (entry1, entry2, state, level, relativePath, options, statistics, diffSet, reason, permissionDeniedState) {
     if (options.noDiffSet) {
         return
     }
