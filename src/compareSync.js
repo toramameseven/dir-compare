@@ -59,18 +59,26 @@ function compare(rootEntry1, rootEntry2, level, relativePath, options, statistic
         // process entry
         if (cmp === 0) {
             // Both left/right exist and have the same name and type
-            let same = false, reason, state
-            if (entry1.isPermissionDenied || entry2.isPermissionDenied) {
-                state = "permission-denied"
+            let same = false, reason, permissionDeniedState, state
+            if (entry1.isPermissionDenied && entry2.isPermissionDenied) {
+                permissionDeniedState = "both"
+                state = 'distinct'
+            } else if (entry1.isPermissionDenied) {
+                permissionDeniedState = "left"
+                state = 'distinct'
+            } else if (entry2.isPermissionDenied) {
+                permissionDeniedState = "right"
+                state = 'distinct'
             } else {
+                permissionDeniedState = "none"
                 const compareEntryRes = entryEquality.isEntryEqualSync(entry1, entry2, type1, options)
                 state = compareEntryRes.same ? 'equal' : 'distinct'
                 same = compareEntryRes.same
                 reason = compareEntryRes.reason
             }
 
-            options.resultBuilder(entry1, entry2, state, level, relativePath, options, statistics, diffSet, reason)
-            stats.updateStatisticsBoth(entry1, entry2, same, reason, type1, statistics, options)
+            options.resultBuilder(entry1, entry2, state, permissionDeniedState, level, relativePath, options, statistics, diffSet, reason)
+            stats.updateStatisticsBoth(entry1, entry2, same, reason, type1, permissionDeniedState, statistics, options)
             i1++
             i2++
             if (!options.skipSubdirs && type1 === 'directory') {
@@ -78,24 +86,24 @@ function compare(rootEntry1, rootEntry2, level, relativePath, options, statistic
             }
         } else if (cmp < 0) {
             // Right missing
-            let state = 'left'
+            let permissionDeniedState = "none"
             if (entry1.isPermissionDenied) {
-                state = "permission-denied"
+                permissionDeniedState = "left"
             }
-            options.resultBuilder(entry1, undefined, state, level, relativePath, options, statistics, diffSet)
-            stats.updateStatisticsLeft(entry1, type1, statistics, options)
+            options.resultBuilder(entry1, undefined, 'left', permissionDeniedState, level, relativePath, options, statistics, diffSet)
+            stats.updateStatisticsLeft(entry1, type1, permissionDeniedState, statistics, options)
             i1++
             if (type1 === 'directory' && !options.skipSubdirs) {
                 compare(entry1, undefined, level + 1, pathUtils.join(relativePath, entry1.name), options, statistics, diffSet, loopDetector.cloneSymlinkCache(symlinkCache))
             }
         } else {
             // Left missing
-            let state = 'right'
+            let permissionDeniedState = "none"
             if (entry2.isPermissionDenied) {
-                state = "permission-denied"
+                permissionDeniedState = "right"
             }
-            options.resultBuilder(undefined, entry2, state, level, relativePath, options, statistics, diffSet)
-            stats.updateStatisticsRight(entry2, type2, statistics, options)
+            options.resultBuilder(undefined, entry2, "right", permissionDeniedState, level, relativePath, options, statistics, diffSet)
+            stats.updateStatisticsRight(entry2, type2, permissionDeniedState, statistics, options)
             i2++
             if (type2 === 'directory' && !options.skipSubdirs) {
                 compare(undefined, entry2, level + 1, pathUtils.join(relativePath, entry2.name), options, statistics, diffSet, loopDetector.cloneSymlinkCache(symlinkCache))

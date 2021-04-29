@@ -263,6 +263,11 @@ export interface Statistics {
      * Statistics available if 'compareSymlink' options is used.
      */
     symlinks?: SymlinkStatistics
+
+    /**
+     * Stats about entries that could not be accessed.
+     */
+    permissionDenied: PermissionDeniedStatistics
 }
 
 export interface BrokenLinksStatistics {
@@ -277,7 +282,7 @@ export interface BrokenLinksStatistics {
     rightBrokenLinks: number
 
     /**
-     * Number of broken links with same name appearing in both path1 and path2  (leftBrokenLinks+rightBrokenLinks+distinctBrokenLinks)
+     * Number of broken links with same name appearing in both path1 and path2  (leftBrokenLinks + rightBrokenLinks + distinctBrokenLinks)
      */
     distinctBrokenLinks: number
 
@@ -285,6 +290,29 @@ export interface BrokenLinksStatistics {
      * Total number of broken links
      */
     totalBrokenLinks: number
+
+}
+
+export interface PermissionDeniedStatistics {
+    /**
+     * Number of forbidden entries found only in path1
+     */
+    leftPermissionDenied: number
+
+    /**
+     * Number of forbidden entries found only in path2
+     */
+    rightPermissionDenied: number
+
+    /**
+     * Number of forbidden entries with same name appearing in both path1 and path2  (leftPermissionDenied + rightPermissionDenied + distinctPermissionDenied)
+     */
+    distinctPermissionDenied: number
+
+    /**
+     * Total number of forbidden entries
+     */
+    totalPermissionDenied: number
 
 }
 
@@ -322,6 +350,7 @@ export interface SymlinkStatistics {
 }
 
 /**
+ * todo: update
  * State of left/right entries relative to each other.
  * * `equal` - Identical entries are found in both left/right dirs.
  * * `left` - Entry is found only in left dir.
@@ -332,7 +361,9 @@ export interface SymlinkStatistics {
  * **Note**: in order to detect permission denied state [[Options.handlePermissionDenied]] needs to be enabled.  
  * Otherwise the comparison will end with error as soon as it encounters a forbidden entry.  
  */
-export type DifferenceState = "equal" | "left" | "right" | "distinct" | "permission-denied"
+export type DifferenceState = "equal" | "left" | "right" | "distinct"
+
+export type PermissionDeniedState = "none" | "both" | "left" | "right"
 
 /**
  * Type of entry.
@@ -384,6 +415,11 @@ export interface Difference {
      * See [[DifferenceState]]
      */
     state: DifferenceState
+
+    /**
+     * todo: specs
+     */
+    permissionDeniedState: PermissionDeniedState
 
     /**
      * Type of left entry.
