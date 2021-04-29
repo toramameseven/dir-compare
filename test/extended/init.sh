@@ -1,15 +1,19 @@
 #!/bin/bash
 
+
+if [[ ! 'root' == $(whoami) ]]; then echo 'Run as root.'; exit 1; fi;
+
+#  todo: needed?
+# ROOTDIR=$(dirname "$0")/../..
+# TESTDIR=$ROOTDIR/build/test/testdir
+# if [ ! -d "$TESTDIR" ]; then
+#     echo "Testdir does not exist. Extracting into $TESTDIR"
+#     node $ROOTDIR/build/test/extract.js
+# fi
+
+# Download and extract linux kernels
 l1=linux-4.3
 l2=linux-4.4
-
-ROOTDIR=$(dirname "$0")/../..
-TESTDIR=$ROOTDIR/build/test/testdir
-if [ ! -d "$TESTDIR" ]; then
-    echo "Testdir does not exist. Extracting into $TESTDIR"
-    node $ROOTDIR/build/test/extract.js
-fi
-
 mkdir -p /tmp/dircompare
 if [ ! -f /tmp/dircompare/$l1.tar.gz ]; then
   echo Downloading /tmp/dircompare/$l1.tar.gz
@@ -36,5 +40,10 @@ if [ ! -d /tmp/$l2 ]; then
       exit 1
   fi
 fi
+
+# Extract dir for permission denied tests
+permissionDeniedDir=/tmp/37-perms
+mkdir -p $permissionDeniedDir
+tar -xf res/37-perms.tar -C $permissionDeniedDir
 
 echo Init done
