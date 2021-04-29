@@ -70,6 +70,16 @@ export interface Options {
     excludeFilter?: string
 
     /**
+     * Handle permission denied errors. Defaults to 'false'.
+     * 
+     * By default when some file/dir cannot be read due to `EACCES` error the comparison will
+     * stop immediately with an error.
+     * If `handlePermissionDenied` is set to true the comparison will continue and offending
+     * files/dirs will be reported as `permission-denied` within [[Difference.state]].
+     */
+    handlePermissionDenied?: boolean
+
+    /**
      * Callback for constructing result. Called for each compared entry pair.
      * 
      * Updates 'statistics' and 'diffSet'.
@@ -313,8 +323,16 @@ export interface SymlinkStatistics {
 
 /**
  * State of left/right entries relative to each other.
+ * * `equal` - Identical entries are found in both left/right dirs.
+ * * `left` - Entry is found only in left dir.
+ * * `right` - Entry is found only in right dir.
+ * * `distinct` - Entries exist in both left/right dir but have different content.
+ * * `permission-denied` - Entries cannot be compared because left or right or both left/right entries cannot be read due to missing permissions.
+ * 
+ * **Note**: in order to detect permission denied state [[Options.handlePermissionDenied]] needs to be enabled.  
+ * Otherwise the comparison will end with error as soon as it encounters a forbidden entry.  
  */
-export type DifferenceState = "equal" | "left" | "right" | "distinct"
+export type DifferenceState = "equal" | "left" | "right" | "distinct" | "permission-denied"
 
 /**
  * Type of entry.
