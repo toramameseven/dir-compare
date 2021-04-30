@@ -86,8 +86,8 @@ function print(res, writer, displayOptions) {
     if (!displayOptions.noDiffIndicator) {
         writer.write(res.same ? 'Entries are identical\n' : 'Entries are different\n')
     }
-    let permissionDeniedStats
-    if(res.permissionDenied){
+    let permissionDeniedStats = ''
+    if (res.permissionDenied.totalPermissionDenied > 0) {
         permissionDeniedStats = `, permission denied: {left: ${res.permissionDenied.leftPermissionDenied}, right: ${res.permissionDenied.rightPermissionDenied}, distinct: ${res.permissionDenied.distinctPermissionDenied}, total: ${res.permissionDenied.totalPermissionDenied}}`
     }
     let stats = util.format('total: %s, equal: %s, distinct: %s, only left: %s, only right: %s%s',
@@ -108,7 +108,7 @@ function print(res, writer, displayOptions) {
 /**
  * Print details for default view mode
  */
-function printPretty(writer, program, detail) {
+function printPretty(writer, displayOptions, detail) {
     const path = detail.relativePath === '' ? PATH_SEP : detail.relativePath
 
     let state
@@ -132,14 +132,14 @@ function printPretty(writer, program, detail) {
     type = detail.type1 !== 'missing' ? detail.type1 : detail.type2
     const cmpEntry = getCompareFile(detail, state)
     let reason = ''
-    if (program.reason && detail.reason) {
+    if (displayOptions.reason && detail.reason) {
         reason = util.format(' <%s>', detail.reason)
     }
     let permissionDeniedState = ''
-    if(detail.permissionDeniedState && detail.permissionDeniedState!=='none'){
+    if (detail.permissionDeniedState && detail.permissionDeniedState !== 'none') {
         permissionDeniedState = ` EACCES: ${detail.permissionDeniedState} `
     }
-    if (program.wholeReport || type === 'broken-link') {
+    if (displayOptions.wholeReport || type === 'broken-link') {
         writer.write(util.format('[%s] %s (%s)%s%s\n', path, cmpEntry, type, reason, permissionDeniedState))
     } else {
         writer.write(util.format('[%s] %s%s%s\n', path, cmpEntry, reason, permissionDeniedState))

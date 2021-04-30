@@ -58,7 +58,7 @@ async function runSingleTest(test: Test, compareFn: CompareFn) {
     const compareResult = await compareFn(test.left, test.right, test.options)
     const t2 = Date.now()
     const writer = new Streams.WritableStream()
-    print(compareResult, writer, { showAll: true, wholeReport: true })
+    print(compareResult, writer, { showAll: true, wholeReport: true, reason: true})
     const compareResultStr = writer.toString()
     const duration = (t2 - t1) / 1000
     const expectedFilePath = join(__dirname, 'res', '37-perms-expected', `${test.testId}.txt`)
@@ -66,7 +66,7 @@ async function runSingleTest(test: Test, compareFn: CompareFn) {
     const ok = compareResultStr === expected
     const testResult = ok ? `ok ${duration} s` : 'fail'
     console.log(`${test.testId} ${test.description}: ${testResult}`)
-    if (test.testId === '005') {
+    if (test.testId === '001') {
         // console.log(compareResultStr)
         // console.log(expected)
     }
