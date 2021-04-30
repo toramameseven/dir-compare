@@ -59,23 +59,20 @@ function compare(rootEntry1, rootEntry2, level, relativePath, options, statistic
         // process entry
         if (cmp === 0) {
             // Both left/right exist and have the same name and type
-            let same = false, reason, permissionDeniedState, state
-            if (entry1.isPermissionDenied && entry2.isPermissionDenied) {
-                permissionDeniedState = "both"
-                state = 'distinct'
-            } else if (entry1.isPermissionDenied) {
-                permissionDeniedState = "left"
-                state = 'distinct'
-            } else if (entry2.isPermissionDenied) {
-                permissionDeniedState = "right"
-                state = 'distinct'
-            } else {
-                permissionDeniedState = "none"
+            let same = false, reason, state
+            const permissionDeniedState = getPermissionDeniedState(entry1, entry2)
+
+            if (permissionDeniedState === "none") {
                 const compareEntryRes = entryEquality.isEntryEqualSync(entry1, entry2, type1, options)
                 state = compareEntryRes.same ? 'equal' : 'distinct'
                 same = compareEntryRes.same
                 reason = compareEntryRes.reason
+            } else {
+                state = 'distinct'
+                same = false
+                reason = "permission-denied"
             }
+
 
             options.resultBuilder(entry1, entry2, state, level, relativePath, options, statistics, diffSet, reason, permissionDeniedState)
             stats.updateStatisticsBoth(entry1, entry2, same, reason, type1, permissionDeniedState, statistics, options)
@@ -113,3 +110,15 @@ function compare(rootEntry1, rootEntry2, level, relativePath, options, statistic
 }
 
 module.exports = compare
+function getPermissionDeniedState(entry1, entry2, permissionDeniedState) {
+    if (entry1.isPermissionDenied && entry2.isPermissionDenied) {
+        return "both"
+    } else if (entry1.isPermissionDenied) {
+        return "left"
+    } else if (entry2.isPermissionDenied) {
+        return "right"
+    } else {
+        return "none"
+    }
+}
+
