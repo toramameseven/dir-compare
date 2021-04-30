@@ -84,7 +84,7 @@ function compare(rootEntry1, rootEntry2, level, relativePath, options, statistic
             }
         } else if (cmp < 0) {
             // Right missing
-            const permissionDeniedState = getPrmissionDenieStateWhenLeftMissing(entry1)
+            const permissionDeniedState = getPrmissionDenieStateWhenRightMissing(entry1)
             options.resultBuilder(entry1, undefined, 'left', level, relativePath, options, statistics, diffSet, undefined, permissionDeniedState)
             stats.updateStatisticsLeft(entry1, type1, permissionDeniedState, statistics, options)
             i1++
@@ -93,7 +93,7 @@ function compare(rootEntry1, rootEntry2, level, relativePath, options, statistic
             }
         } else {
             // Left missing
-            let permissionDeniedState = getPrmissionDenieStateWhenRightMissing(entry2)
+            let permissionDeniedState = getPrmissionDenieStateWhenLeftMissing(entry2)
             options.resultBuilder(undefined, entry2, "right", level, relativePath, options, statistics, diffSet, undefined, permissionDeniedState)
             stats.updateStatisticsRight(entry2, type2, permissionDeniedState, statistics, options)
             i2++
