@@ -26,14 +26,12 @@ module.exports = {
             }
         }
 
-        if (options.handlePermissionDenied) {
-            if (permissionDeniedState === "left") {
-                statistics.permissionDenied.leftPermissionDenied++
-            } else if (permissionDeniedState === "right") {
-                statistics.permissionDenied.rightPermissionDenied++
-            } else if (permissionDeniedState === "both") {
-                statistics.permissionDenied.distinctPermissionDenied++
-            }
+        if (permissionDeniedState === "left") {
+            statistics.permissionDenied.leftPermissionDenied++
+        } else if (permissionDeniedState === "right") {
+            statistics.permissionDenied.rightPermissionDenied++
+        } else if (permissionDeniedState === "both") {
+            statistics.permissionDenied.distinctPermissionDenied++
         }
     },
     updateStatisticsLeft(entry1, type, permissionDeniedState, statistics, options) {
@@ -52,7 +50,7 @@ module.exports = {
             statistics.symlinks.leftSymlinks++
         }
 
-        if (options.handlePermissionDenied && permissionDeniedState === "left") {
+        if (permissionDeniedState === "left") {
             statistics.permissionDenied.leftPermissionDenied++
         }
     },
@@ -72,7 +70,7 @@ module.exports = {
             statistics.symlinks.rightSymlinks++
         }
 
-        if (options.handlePermissionDenied && permissionDeniedState === "right") {
+        if (permissionDeniedState === "right") {
             statistics.permissionDenied.rightPermissionDenied++
         }
     },

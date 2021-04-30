@@ -19,13 +19,10 @@ module.exports = {
             rightBrokenLinks: 0,
             distinctBrokenLinks: 0,
         }
-        let permissionDeniedStatistics
-        if (options.handlePermissionDenied) {
-            permissionDeniedStatistics = {
-                leftPermissionDenied: 0,
-                rightPermissionDenied: 0,
-                distinctPermissionDenied: 0,
-            }
+        const permissionDeniedStatistics = {
+            leftPermissionDenied: 0,
+            rightPermissionDenied: 0,
+            distinctPermissionDenied: 0,
         }
         return {
             distinct: 0,
@@ -56,10 +53,8 @@ module.exports = {
         statistics.totalDirs = statistics.equalDirs + statistics.differencesDirs
         const brokenLInksStats = statistics.brokenLinks
         brokenLInksStats.totalBrokenLinks = brokenLInksStats.leftBrokenLinks + brokenLInksStats.rightBrokenLinks + brokenLInksStats.distinctBrokenLinks
-        if (options.handlePermissionDenied) {
-            const permissionDeniedStats = statistics.permissionDenied
-            permissionDeniedStats.totalPermissionDenied = permissionDeniedStats.leftPermissionDenied + permissionDeniedStats.rightPermissionDenied + permissionDeniedStats.distinctPermissionDenied
-        }
+        const permissionDeniedStats = statistics.permissionDenied
+        permissionDeniedStats.totalPermissionDenied = permissionDeniedStats.leftPermissionDenied + permissionDeniedStats.rightPermissionDenied + permissionDeniedStats.distinctPermissionDenied
         statistics.same = statistics.differences ? false : true
 
         if (options.compareSymlink) {
