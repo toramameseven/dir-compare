@@ -26,11 +26,11 @@ module.exports = {
             }
         }
 
-        if (permissionDeniedState === "left") {
+        if (permissionDeniedState === "error-left") {
             statistics.permissionDenied.leftPermissionDenied++
-        } else if (permissionDeniedState === "right") {
+        } else if (permissionDeniedState === "error-right") {
             statistics.permissionDenied.rightPermissionDenied++
-        } else if (permissionDeniedState === "both") {
+        } else if (permissionDeniedState === "error-both") {
             statistics.permissionDenied.distinctPermissionDenied++
         }
     },
@@ -50,7 +50,7 @@ module.exports = {
             statistics.symlinks.leftSymlinks++
         }
 
-        if (permissionDeniedState === "left") {
+        if (permissionDeniedState === "error-left") {
             statistics.permissionDenied.leftPermissionDenied++
         }
     },
@@ -70,7 +70,7 @@ module.exports = {
             statistics.symlinks.rightSymlinks++
         }
 
-        if (permissionDeniedState === "right") {
+        if (permissionDeniedState === "error-right") {
             statistics.permissionDenied.rightPermissionDenied++
         }
     },

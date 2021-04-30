@@ -356,20 +356,22 @@ export interface SymlinkStatistics {
 }
 
 /**
- * todo: update
  * State of left/right entries relative to each other.
  * * `equal` - Identical entries are found in both left/right dirs.
  * * `left` - Entry is found only in left dir.
  * * `right` - Entry is found only in right dir.
- * * `distinct` - Entries exist in both left/right dir but have different content.
- * * `permission-denied` - Entries cannot be compared because left or right or both left/right entries cannot be read due to missing permissions.
- * 
- * **Note**: in order to detect permission denied state [[Options.handlePermissionDenied]] needs to be enabled.  
- * Otherwise the comparison will end with error as soon as it encounters a forbidden entry.  
+ * * `distinct` - Entries exist in both left/right dir but have different content. See [[Difference.reason]] to understan why entries are considered distinct.
  */
 export type DifferenceState = "equal" | "left" | "right" | "distinct"
 
-export type PermissionDeniedState = "none" | "both" | "left" | "right"
+/**
+ * Permission related state of left/right entries. Available only when [[Options.handlePermissionDenied]] is enabled.
+ * * `access-ok`          - both entries are accessible
+ * * `error-both`  - neither entry can be accessed
+ * * `error-left`  - left entry cannot be accessed
+ * * `error-right` - right entry cannot be accessed
+ */
+export type PermissionDeniedState = "access-ok" | "error-both" | "error-left" | "error-right"
 
 /**
  * Type of entry.
@@ -378,8 +380,9 @@ export type DifferenceType = "missing" | "file" | "directory" | "broken-link"
 
 /**
  * Provides reason when two identically named entries are distinct.
+ * Not available if entries are equal.
  */
-export type Reason = "different-size" | "different-date" | "different-content" | "broken-link" | 'different-symlink' | 'permission-denied'
+export type Reason = undefined | "different-size" | "different-date" | "different-content" | "broken-link" | 'different-symlink' | 'permission-denied'
 
 export interface Difference {
     /**
@@ -423,7 +426,7 @@ export interface Difference {
     state: DifferenceState
 
     /**
-     * todo: specs
+     * See [[PermissionDeniedState]].
      */
     permissionDeniedState: PermissionDeniedState
 
@@ -470,9 +473,8 @@ export interface Difference {
 
     /**
      * See [[Reason]].
-     * Not available if entries are equal.
      */
-    reason?: Reason
+    reason: Reason
 }
 
 /**

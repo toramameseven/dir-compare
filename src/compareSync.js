@@ -6,6 +6,7 @@ const stats = require('./statistics/statisticsUpdate')
 const loopDetector = require('./symlink/loopDetector')
 const entryComparator = require('./entry/entryComparator')
 const entryType = require('./entry/entryType')
+const { getPrmissionDenieStateWhenLeftMissing, getPrmissionDenieStateWhenRightMissing, getPermissionDeniedState } = require('./permissions/permissionDeniedState')
 
 /**
  * Returns the sorted list of entries in a directory.
@@ -62,7 +63,7 @@ function compare(rootEntry1, rootEntry2, level, relativePath, options, statistic
             let same = false, reason, state
             const permissionDeniedState = getPermissionDeniedState(entry1, entry2)
 
-            if (permissionDeniedState === "none") {
+            if (permissionDeniedState === "access-ok") {
                 const compareEntryRes = entryEquality.isEntryEqualSync(entry1, entry2, type1, options)
                 state = compareEntryRes.same ? 'equal' : 'distinct'
                 same = compareEntryRes.same
@@ -83,10 +84,7 @@ function compare(rootEntry1, rootEntry2, level, relativePath, options, statistic
             }
         } else if (cmp < 0) {
             // Right missing
-            let permissionDeniedState = "none"
-            if (entry1.isPermissionDenied) {
-                permissionDeniedState = "left"
-            }
+            const permissionDeniedState = getPrmissionDenieStateWhenLeftMissing(entry1)
             options.resultBuilder(entry1, undefined, 'left', level, relativePath, options, statistics, diffSet, undefined, permissionDeniedState)
             stats.updateStatisticsLeft(entry1, type1, permissionDeniedState, statistics, options)
             i1++
@@ -95,10 +93,7 @@ function compare(rootEntry1, rootEntry2, level, relativePath, options, statistic
             }
         } else {
             // Left missing
-            let permissionDeniedState = "none"
-            if (entry2.isPermissionDenied) {
-                permissionDeniedState = "right"
-            }
+            let permissionDeniedState = getPrmissionDenieStateWhenRightMissing(entry2)
             options.resultBuilder(undefined, entry2, "right", level, relativePath, options, statistics, diffSet, undefined, permissionDeniedState)
             stats.updateStatisticsRight(entry2, type2, permissionDeniedState, statistics, options)
             i2++
@@ -110,15 +105,4 @@ function compare(rootEntry1, rootEntry2, level, relativePath, options, statistic
 }
 
 module.exports = compare
-function getPermissionDeniedState(entry1, entry2, permissionDeniedState) {
-    if (entry1.isPermissionDenied && entry2.isPermissionDenied) {
-        return "both"
-    } else if (entry1.isPermissionDenied) {
-        return "left"
-    } else if (entry2.isPermissionDenied) {
-        return "right"
-    } else {
-        return "none"
-    }
-}
 
