@@ -3,11 +3,6 @@ const pathUtils = require('path')
 
 const PATH_SEP = pathUtils.sep
 
-// Prints dir compare results.
-// 'program' represents display options and correspond to dircompare command line parameters.
-// Example: 'dircompare --show-all --exclude *.js dir1 dir2' translates into
-// program: {showAll: true, exclude: '*.js'}
-//
 function print(res, writer, displayOptions) {
     // calculate relative path length for pretty print
     let relativePathMaxLength = 0, fileNameMaxLength = 0
@@ -136,7 +131,7 @@ function printPretty(writer, displayOptions, detail) {
         reason = util.format(' <%s>', detail.reason)
     }
     let permissionDeniedState = ''
-    if (detail.permissionDeniedState && detail.permissionDeniedState !== 'none') {
+    if (detail.permissionDeniedState && detail.permissionDeniedState !== 'access-ok') {
         permissionDeniedState = ` EACCES: ${detail.permissionDeniedState} `
     }
     if (displayOptions.wholeReport || type === 'broken-link') {
