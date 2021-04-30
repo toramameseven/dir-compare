@@ -72,10 +72,11 @@ export interface Options {
     /**
      * Handle permission denied errors. Defaults to 'false'.
      * 
-     * By default when some file/dir cannot be read due to `EACCES` error the comparison will
+     * By default when some entry cannot be read due to `EACCES` error the comparison will
      * stop immediately with an error.
+     * 
      * If `handlePermissionDenied` is set to true the comparison will continue and offending
-     * files/dirs will be reported as `permission-denied` within [[Difference.state]].
+     * entries will be reported as `permission-denied` within [[Difference.state]].
      */
     handlePermissionDenied?: boolean
 
@@ -140,6 +141,11 @@ export interface Entry {
     stat: fs.Stats
     lstat: fs.Stats
     symlink: boolean
+    /**
+     * True when this entry is not readable.
+     * This value is set only when [[Options.handlePermissionDenied]] is enabled.
+     */
+    isPermissionDenied: boolean
 }
 
 /**
@@ -373,7 +379,7 @@ export type DifferenceType = "missing" | "file" | "directory" | "broken-link"
 /**
  * Provides reason when two identically named entries are distinct.
  */
-export type Reason = "different-size" | "different-date" | "different-content" | "broken-link" | 'different-symlink'
+export type Reason = "different-size" | "different-date" | "different-content" | "broken-link" | 'different-symlink' | 'permission-denied'
 
 export interface Difference {
     /**
