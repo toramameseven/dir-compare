@@ -88,7 +88,7 @@ function print(res, writer, displayOptions) {
     }
     let permissionDeniedStats
     if(res.permissionDenied){
-        permissionDeniedStats = `,permission denied: {left: ${res.permissionDenied.leftPermissionDenied}, right: ${res.permissionDenied.rightPermissionDenied}, distinct: ${res.permissionDenied.distinctPermissionDenied}, total: ${res.permissionDenied.totalPermissionDenied}}`
+        permissionDeniedStats = `, permission denied: {left: ${res.permissionDenied.leftPermissionDenied}, right: ${res.permissionDenied.rightPermissionDenied}, distinct: ${res.permissionDenied.distinctPermissionDenied}, total: ${res.permissionDenied.totalPermissionDenied}}`
     }
     let stats = util.format('total: %s, equal: %s, distinct: %s, only left: %s, only right: %s%s',
         statTotal,

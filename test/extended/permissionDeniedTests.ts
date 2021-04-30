@@ -1,6 +1,8 @@
 import { compareSync, compare, Options, fileCompareHandlers, Result } from "../../src"
 import print from '../print'
 import Streams from 'memory-streams'
+import { readFileSync } from "fs"
+import { join } from "path"
 
 interface Test {
     testId: string,
@@ -8,18 +10,44 @@ interface Test {
     right: string,
     description: string,
     options: Options,
-    expected: string
 }
 
 const tests: Test[] = [
     {
         testId: '001',
-        description: 'compare by file size',
-        left:  '/tmp/37-perms/t1-files-and-dirs/a',
-        right: '/tmp/37-perms/t1-files-and-dirs/b',
-        options: { noDiffSet: false, compareSize: true, compareContent: true, handlePermissionDenied: true},
-        expected: '{"distinct":8349,"equal":46887,"left":792,"right":1755,"distinctFiles":8349,"equalFiles":43361,"leftFiles":750,"rightFiles":1639,"distinctDirs":0,"equalDirs":3526,"leftDirs":42,"rightDirs":116,"brokenLinks":{"leftBrokenLinks":0,"rightBrokenLinks":0,"distinctBrokenLinks":0,"totalBrokenLinks":0},"same":false,"differences":10896,"differencesFiles":10738,"differencesDirs":158,"total":57783,"totalFiles":54099,"totalDirs":3684}'
-    }
+        description: 'Should handle permission denied errors when handlePermissionDenied option is used',
+        left: '/tmp/37-perms-test/t1-files-and-dirs/a',
+        right: '/tmp/37-perms-test/t1-files-and-dirs/b',
+        options: { compareSize: true, compareContent: true, handlePermissionDenied: true },
+    },
+    {
+        testId: '002',
+        description: 'Should support links when dealing with permission denied errors',
+        left:  '/tmp/37-perms-test/t2-links/a',
+        right: '/tmp/37-perms-test/t2-links/b',
+        options: { compareSize: true, compareContent: true, handlePermissionDenied: true },
+    },
+    {
+        testId: '003',
+        description: 'Should support forbidden root directories',
+        left:  '/tmp/37-perms-test/t3-root/t1-root-left-dir-ok,root-right-dir-forbidden/a',
+        right: '/tmp/37-perms-test/t3-root/t1-root-left-dir-ok,root-right-dir-forbidden/b',
+        options: { compareSize: true, compareContent: true, handlePermissionDenied: true },
+    },
+    {
+        testId: '004',
+        description: 'Should support forbidden root directories (reversed)',
+        left:  '/tmp/37-perms-test/t3-root/t1-root-left-dir-ok,root-right-dir-forbidden/b',
+        right: '/tmp/37-perms-test/t3-root/t1-root-left-dir-ok,root-right-dir-forbidden/a',
+        options: { compareSize: true, compareContent: true, handlePermissionDenied: true },
+    },
+    {
+        testId: '005',
+        description: 'Should support forbidden root files',
+        left:  '/tmp/37-perms-test/t3-root/t2-root-left-file-ok,root-right-file-forbidden.txt/a/test.txt',
+        right: '/tmp/37-perms-test/t3-root/t2-root-left-file-ok,root-right-file-forbidden.txt/b/test.txt',
+        options: { compareSize: true, compareContent: true, handlePermissionDenied: true },
+    },
 
 ]
 
@@ -30,15 +58,18 @@ async function runSingleTest(test: Test, compareFn: CompareFn) {
     const compareResult = await compareFn(test.left, test.right, test.options)
     const t2 = Date.now()
     const writer = new Streams.WritableStream()
-    print(compareResult, writer, {showAll: true, wholeReport: true})
-    const compareResultStr = JSON.stringify(writer.toString())
-    if(test.testId==='001'){
-        console.log(writer.toString())
-    }
+    print(compareResult, writer, { showAll: true, wholeReport: true })
+    const compareResultStr = writer.toString()
     const duration = (t2 - t1) / 1000
-    const ok = compareResultStr === test.expected
+    const expectedFilePath = join(__dirname, 'res', '37-perms-expected', `${test.testId}.txt`)
+    const expected = readFileSync(expectedFilePath).toString()
+    const ok = compareResultStr === expected
     const testResult = ok ? `ok ${duration} s` : 'fail'
     console.log(`${test.testId} ${test.description}: ${testResult}`)
+    if (test.testId === '005') {
+        // console.log(compareResultStr)
+        // console.log(expected)
+    }
     if (!ok) {
         process.exit(1)
     }
