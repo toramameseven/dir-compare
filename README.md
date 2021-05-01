@@ -17,7 +17,7 @@ Node JS directory compare
   * [Custom name comparators](#custom-name-comparators)
   * [Custom result builder](#custom-result-builder)
   * [Symbolic links](#symbolic-links)
-- [Command line](#command-line)
+- [UI tools](#ui-tools)
 - [Changelog](#changelog)
 
 # Installation
@@ -181,7 +181,7 @@ A couple of handlers are included in the library:
 Use [defaultFileCompare.js](https://github.com/gliviu/dir-compare/blob/master/src/fileCompareHandler/defaultFileCompare.js) as an example to create your own.
 
 ### Ignore line endings and white spaces
-Line based comparator can be used to ignore line ending and white space differences. This comparator is not available in [CLI](#command-line) mode.
+Line based comparator can be used to ignore line ending and white space differences.
 ```javascript
 const dircompare = require('dir-compare');
 
@@ -284,8 +284,9 @@ These rules are applied in addition to the other comparison modes; ie. by conten
 
 If entries are different because of symlinks, `reason` will be `different-symlink`. Also statistics summarizes differences caused by symbolik links.
 
-# Command line
-See [dir-compare-cli](https://github.com/gliviu/dir-compare-cli).
+# UI tools
+* [dir-compare-cli](https://github.com/gliviu/dir-compare-cli).
+* [Visual Studio Code - Compare Folders](https://marketplace.visualstudio.com/items?itemName=moshfeu.compare-folders)
 
 # Changelog
 * v3.1.0 Added ignoreAllWhiteSpaces and ignoreEmptyLines options
