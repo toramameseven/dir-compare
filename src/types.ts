@@ -75,8 +75,30 @@ export interface Options {
      * By default when some entry cannot be read due to `EACCES` error the comparison will
      * stop immediately with an error.
      * 
-     * If `handlePermissionDenied` is set to true the comparison will continue and offending
-     * entries will be reported as `permission-denied` within [[Difference.state]].
+     * If `handlePermissionDenied` is set to true the comparison will continue when unreadable entries are encountered.
+     * 
+     * Offending entries will be reported within [[Difference.permissionDeniedState]], [[Difference.reason]] and [[Statistics.permissionDenied]].
+     * 
+     * Lets consider we want to compare two identical folders `A` and `B` with `B/dir2` being unreadable for current user.
+     * ```
+     * A                    B
+     *   dir1                 dir1
+     *     file1                file1
+     *   dir2                 dir2 (permission denied)
+     *     file2                file2
+     * ```
+     * 
+     * [[Result.diffSet]] will look like:
+     * 
+     * |relativePath  |path1    |path2    | state      |reason                  |permissionDeniedState|
+     * |--------------|---------|---------|------------|------------------------|---------------------|
+     * |[/]           |dir1     |dir1     |`equal`     |                        |                     |  
+     * |[/dir1]       |file1    |file1    |`equal`     |                        |                     |  
+     * |[/]           |dir2     |dir2     |`distinct`  |  `permission-denied`   |`access-error-right` |  
+     * |[/dir2]       |file2    |missing  |`left`      |                        |                     |  
+     * 
+     * And [[Result.permissionDenied]] statistics look like - left: 0, right: 1, distinct: 0, total: 1
+     * 
      */
     handlePermissionDenied?: boolean
 
@@ -426,7 +448,7 @@ export interface Difference {
     state: DifferenceState
 
     /**
-     * See [[PermissionDeniedState]].
+     * Permission related state of left/right entries.
      */
     permissionDeniedState: PermissionDeniedState
 
@@ -472,7 +494,7 @@ export interface Difference {
     level: number
 
     /**
-     * See [[Reason]].
+     * Provides reason when two identically named entries are distinct.
      */
     reason: Reason
 }
