@@ -17,6 +17,7 @@ Node JS directory compare
   * [Custom name comparators](#custom-name-comparators)
   * [Custom result builder](#custom-result-builder)
   * [Symbolic links](#symbolic-links)
+- [Handling permission denied errors](#handling-permission-denied-errors)
 - [UI tools](#ui-tools)
 - [Changelog](#changelog)
 
@@ -283,6 +284,10 @@ In this mode two entries with identical name are considered different if
 These rules are applied in addition to the other comparison modes; ie. by content, by size...
 
 If entries are different because of symlinks, `reason` will be `different-symlink`. Also statistics summarizes differences caused by symbolik links.
+
+# Handling permission denied errors
+Unreadable files or directories are normally reported as errors. The comparison will be intrerrupted with an `EACCES` exception.
+This behavior can be altered with [Options.handlePermissionDenied](https://gliviu.github.io/dc-api/interfaces/options.html#handlepermissiondenied).
 
 # UI tools
 * [dir-compare-cli](https://github.com/gliviu/dir-compare-cli).
