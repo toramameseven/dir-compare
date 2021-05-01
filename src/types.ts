@@ -367,11 +367,11 @@ export type DifferenceState = "equal" | "left" | "right" | "distinct"
 /**
  * Permission related state of left/right entries. Available only when [[Options.handlePermissionDenied]] is enabled.
  * * `access-ok`          - both entries are accessible
- * * `error-both`  - neither entry can be accessed
- * * `error-left`  - left entry cannot be accessed
- * * `error-right` - right entry cannot be accessed
+ * * `access-error-both`  - neither entry can be accessed
+ * * `access-error-left`  - left entry cannot be accessed
+ * * `access-error-right` - right entry cannot be accessed
  */
-export type PermissionDeniedState = "access-ok" | "error-both" | "error-left" | "error-right"
+export type PermissionDeniedState = "access-ok" | "access-error-both" | "access-error-left" | "access-error-right"
 
 /**
  * Type of entry.
