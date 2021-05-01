@@ -50,13 +50,19 @@ const tests: Test[] = [
         options: { compareSize: true, compareContent: true, handlePermissionDenied: true },
     },
     {
+        testId: '006',
+        description: 'Should not report permission denied if files are not compared by content',
+        left: '/tmp/37-perms-test/t1-files-and-dirs/a',
+        right: '/tmp/37-perms-test/t1-files-and-dirs/b',
+        options: { compareSize: true, compareContent: false, handlePermissionDenied: true },
+    },
+    {
         testId: '010',
         description: 'Should not handle permission denied errors when options.handlePermissionDenied is disabled',
         left: '/tmp/37-perms-test/t1-files-and-dirs/a',
         right: '/tmp/37-perms-test/t1-files-and-dirs/b',
         options: { compareSize: true, compareContent: true, handlePermissionDenied: false },
     },
-
 ]
 
 type CompareFn = (left: string, right: string, options: Options) => Promise<Result> | Result
@@ -75,8 +81,8 @@ async function runSingleTest(test: Test, compareFn: CompareFn) {
     const ok = compareResultStr === expected
     const testResult = ok ? `OK` : 'FAIL'
     console.log(`${test.testId} ${test.description}: ${testResult}`)
-    if (test.testId === '010') {
-        // console.log(compareResultStr)
+    if (test.testId === '001x') {
+        console.log(compareResultStr)
         // console.log(expected)
     }
     if (!ok) {
