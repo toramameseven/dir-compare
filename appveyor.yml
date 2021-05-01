@@ -1,6 +1,7 @@
 branches:
   only:
     - master
+    - 37-2
 image:
   - Visual Studio 2019
   - Ubuntu
