@@ -81,8 +81,8 @@ async function runSingleTest(test: Test, compareFn: CompareFn) {
     const ok = compareResultStr === expected
     const testResult = ok ? `OK` : 'FAIL'
     console.log(`${test.testId} ${test.description}: ${testResult}`)
-    if (test.testId === '001x') {
-        console.log(compareResultStr)
+    if (test.testId === '001') {
+        // console.log(compareResultStr)
         // console.log(expected)
     }
     if (!ok) {
@@ -99,8 +99,7 @@ async function main() {
 
     console.log('Async')
     for (const test of tests) {
-        // todo : uncomment
-        // await runSingleTest(test, compare)
+        await runSingleTest(test, compare)
     }
     console.log("Done")
 }
