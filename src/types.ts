@@ -73,11 +73,11 @@ export interface Options {
      * Handle permission denied errors. Defaults to 'false'.
      * 
      * By default when some entry cannot be read due to `EACCES` error the comparison will
-     * stop immediately with an error.
+     * stop immediately with an exception.
      * 
      * If `handlePermissionDenied` is set to true the comparison will continue when unreadable entries are encountered.
      * 
-     * Offending entries will be reported within [[Difference.permissionDeniedState]], [[Difference.reason]] and [[Statistics.permissionDenied]].
+     * Offending entries will be reported within [[Difference.permissionDeniedState]], [[Difference.reason]] and [[Result.permissionDenied]].
      * 
      * Lets consider we want to compare two identical folders `A` and `B` with `B/dir2` being unreadable for current user.
      * ```
