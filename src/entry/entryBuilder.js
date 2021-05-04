@@ -13,6 +13,7 @@ module.exports = {
 		const res = []
 		for (let i = 0; i < dirEntries.length; i++) {
 			const entryName = dirEntries[i]
+			// todo: use path.join
 			const entryAbsolutePath = rootEntry.absolutePath + PATH_SEP + entryName
 			const entryPath = rootEntry.path + PATH_SEP + entryName
 
@@ -21,6 +22,7 @@ module.exports = {
 				entry.stat = undefined
 			}
 
+			// todo: send entryAbsolutePath
 			if (filterEntry(entry, relativePath, options)) {
 				res.push(entry)
 			}
@@ -92,7 +94,12 @@ function filterEntry(entry, relativePath, options) {
 	if (entry.isSymlink && options.skipSymlinks) {
 		return false
 	}
+
 	const path = pathUtils.join(relativePath, entry.name)
+
+	if (options.skipEmptyDirs && entry.stat.isDirectory() && isEmptyDir(path)) {
+		return false
+	}
 
 	if ((entry.stat.isFile() && options.includeFilter) && (!match(path, options.includeFilter))) {
 		return false
@@ -103,6 +110,10 @@ function filterEntry(entry, relativePath, options) {
 	}
 
 	return true
+}
+
+function isEmptyDir(path){
+	return fs.readdirSync(path).length===0
 }
 
 /**
