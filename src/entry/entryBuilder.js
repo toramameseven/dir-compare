@@ -13,7 +13,6 @@ module.exports = {
 		const res = []
 		for (let i = 0; i < dirEntries.length; i++) {
 			const entryName = dirEntries[i]
-			// todo: use path.join
 			const entryAbsolutePath = rootEntry.absolutePath + PATH_SEP + entryName
 			const entryPath = rootEntry.path + PATH_SEP + entryName
 
@@ -22,7 +21,6 @@ module.exports = {
 				entry.stat = undefined
 			}
 
-			// todo: send entryAbsolutePath
 			if (filterEntry(entry, relativePath, options)) {
 				res.push(entry)
 			}
