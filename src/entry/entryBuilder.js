@@ -95,7 +95,7 @@ function filterEntry(entry, relativePath, options) {
 
 	const path = pathUtils.join(relativePath, entry.name)
 
-	if (options.skipEmptyDirs && entry.stat.isDirectory() && isEmptyDir(path)) {
+	if (options.skipEmptyDirs && entry.stat.isDirectory() && isEmptyDir(entry.absolutePath)) {
 		return false
 	}
 
@@ -110,8 +110,8 @@ function filterEntry(entry, relativePath, options) {
 	return true
 }
 
-function isEmptyDir(path){
-	return fs.readdirSync(path).length===0
+function isEmptyDir(path) {
+	return fs.readdirSync(path).length === 0
 }
 
 /**
