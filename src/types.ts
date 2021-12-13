@@ -145,6 +145,8 @@ export interface Options {
     compareNameHandler?: CompareNameHandler
 }
 
+export type DiffSet = Array<Difference>
+
 /**
  * Callback for constructing result. Called for each compared entry pair.
  * 
@@ -170,7 +172,7 @@ export type ResultBuilder =
         relativePath: string,
         options: Options,
         statistics: Statistics,
-        diffSet: Array<Difference> | undefined,
+        diffSet: DiffSet | undefined,
         reason: Reason | undefined
     ) => void
 
@@ -180,7 +182,9 @@ export interface Entry {
     path: string
     stat: fs.Stats
     lstat: fs.Stats
-    symlink: boolean
+    isDirectory: boolean
+    isSymlink: boolean
+    isBrokenLink: boolean
     /**
      * True when this entry is not readable.
      * This value is set only when [[Options.handlePermissionDenied]] is enabled.
