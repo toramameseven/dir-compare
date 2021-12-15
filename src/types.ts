@@ -510,13 +510,13 @@ export interface Difference {
      * Left entry modification date (stat.mtime).
      * Is undefined if missing on the left side.
      */
-    date1?: number
+    date1?: Date
 
     /**
      * Right entry modification date (stat.mtime).
      * Is undefined if missing on the right side.
      */
-    date2?: number
+    date2?: Date
 
     /**
      * Depth level relative to root dir.

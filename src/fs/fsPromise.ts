@@ -1,7 +1,9 @@
-const fs = require('fs')
+import fs from 'fs'
 
-module.exports = {
-    readdir(path) {
+export type BytesRead = number
+
+export default {
+    async readdir(path: string): Promise<string[]> {
         return new Promise((resolve, reject) => {
             fs.readdir(path, (err, files) => {
                 if (err) {
@@ -12,7 +14,7 @@ module.exports = {
             })
         })
     },
-    read(fd, buffer, offset, length, position) {
+    async read(fd: number, buffer: Buffer, offset: number, length: number, position: number): Promise<BytesRead> {
         return new Promise((resolve, reject) => {
             fs.read(fd, buffer, offset, length, position, (err, bytesRead) => {
                 if (err) {

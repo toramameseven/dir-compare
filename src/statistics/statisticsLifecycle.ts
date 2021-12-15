@@ -1,9 +1,12 @@
+import { BrokenLinksStatistics, PermissionDeniedStatistics, Statistics, SymlinkStatistics } from ".."
+import { ExtOptions } from "../ExtOptions"
+
 /**
  * Controls creation/completion of global statistics object.
  */
-module.exports = {
-    initStats(options) {
-        let symlinkStatistics = undefined
+export default {
+    initStats(options: ExtOptions): Partial<Statistics> {
+        let symlinkStatistics: SymlinkStatistics | undefined = undefined
         if (options.compareSymlink) {
             symlinkStatistics = {
                 distinctSymlinks: 0,
@@ -14,15 +17,17 @@ module.exports = {
                 totalSymlinks: 0,
             }
         }
-        const brokenLinksStatistics = {
+        const brokenLinksStatistics: BrokenLinksStatistics = {
             leftBrokenLinks: 0,
             rightBrokenLinks: 0,
             distinctBrokenLinks: 0,
+            totalBrokenLinks: 0
         }
-        const permissionDeniedStatistics = {
+        const permissionDeniedStatistics: PermissionDeniedStatistics = {
             leftPermissionDenied: 0,
             rightPermissionDenied: 0,
             distinctPermissionDenied: 0,
+            totalPermissionDenied: 0
         }
         return {
             distinct: 0,
@@ -40,11 +45,10 @@ module.exports = {
             brokenLinks: brokenLinksStatistics,
             symlinks: symlinkStatistics,
             permissionDenied: permissionDeniedStatistics,
-            same: undefined
         }
     },
 
-    completeStatistics(statistics, options) {
+    completeStatistics(statistics: Statistics, options: ExtOptions): void {
         statistics.differences = statistics.distinct + statistics.left + statistics.right
         statistics.differencesFiles = statistics.distinctFiles + statistics.leftFiles + statistics.rightFiles
         statistics.differencesDirs = statistics.distinctDirs + statistics.leftDirs + statistics.rightDirs
@@ -58,9 +62,10 @@ module.exports = {
         statistics.same = statistics.differences ? false : true
 
         if (options.compareSymlink) {
-            statistics.symlinks.differencesSymlinks = statistics.symlinks.distinctSymlinks +
-                statistics.symlinks.leftSymlinks + statistics.symlinks.rightSymlinks
-            statistics.symlinks.totalSymlinks = statistics.symlinks.differencesSymlinks + statistics.symlinks.equalSymlinks
+            const symlinkStatistics = statistics.symlinks as SymlinkStatistics
+            symlinkStatistics.differencesSymlinks = symlinkStatistics.distinctSymlinks +
+                symlinkStatistics.leftSymlinks + symlinkStatistics.rightSymlinks
+            symlinkStatistics.totalSymlinks = symlinkStatistics.differencesSymlinks + symlinkStatistics.equalSymlinks
         }
     }
 
