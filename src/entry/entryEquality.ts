@@ -1,10 +1,13 @@
 import fs from 'fs'
 import { DifferenceType, DiffSet, Entry, Reason } from '..'
 import { ExtOptions } from '../ExtOptions'
+import { FileEquality } from './types/FileEquality'
+import { FileEqualityPromise } from './types/FileEqualityPromise'
+import { SamePromise } from './types/SamePromise'
 /**
  * Compares two entries with identical name and type.
  */
-export default {
+export = {
     isEntryEqualSync(entry1: Entry, entry2: Entry, type: DifferenceType, options: ExtOptions): FileEquality {
         if (type === 'file') {
             return isFileEqualSync(entry1, entry2, options)
@@ -33,10 +36,6 @@ export default {
 }
 
 
-export type FileEquality = {
-    same: boolean
-    reason?: Reason
-}
 
 function isFileEqualSync(entry1: Entry, entry2: Entry, options: ExtOptions): FileEquality {
     if (options.compareSymlink && !isSymlinkEqual(entry1, entry2)) {
@@ -54,22 +53,6 @@ function isFileEqualSync(entry1: Entry, entry2: Entry, options: ExtOptions): Fil
     return { same: true }
 }
 
-export type FileEqualityPromise = {
-    same?: boolean
-    reason?: Reason
-    samePromise?: Promise<SamePromise>
-}
-
-export type SamePromise = {
-    entry1?: Entry
-    entry2?: Entry
-    same?: boolean
-    error: unknown
-    diffSet?: DiffSet
-    type1?: DifferenceType
-    type2?: DifferenceType
-    reason?: Reason
-}
 
 async function isFileEqualAsync(entry1: Entry, entry2: Entry, type: DifferenceType, diffSet: DiffSet, options: ExtOptions): Promise<FileEqualityPromise> {
     if (options.compareSymlink && !isSymlinkEqual(entry1, entry2)) {

@@ -1,6 +1,6 @@
 import { DifferenceType, Entry } from ".."
 
-export default {
+export = {
 	/**
 	 * One of 'missing','file','directory','broken-link'
 	 */

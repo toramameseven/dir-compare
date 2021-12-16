@@ -1,5 +1,5 @@
 import fs, { NoParamCallback } from 'fs'
-import Queue from './Queue'
+import { Queue } from './Queue'
 
 type OpenFileFlags = string
 type OpenFileCallback = (err: NodeJS.ErrnoException | null, fd: number) => void

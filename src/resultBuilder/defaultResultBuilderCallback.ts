@@ -3,7 +3,7 @@ import { DifferenceState, DiffSet, Entry, PermissionDeniedState, Reason, Statist
 import entryType from '../entry/entryType'
 import { ExtOptions } from '../ExtOptions'
 
-export default function (entry1: Entry, entry2: Entry, state: DifferenceState, level: number,
+export = function (entry1: Entry, entry2: Entry, state: DifferenceState, level: number,
     relativePath: string, options: ExtOptions, statistics: Statistics, diffSet: DiffSet, reason: Reason, 
     permissionDeniedState: PermissionDeniedState): void {
 

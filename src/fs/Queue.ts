@@ -16,7 +16,7 @@ const MAX_UNUSED_ARRAY_SIZE = 10000
 /* Creates a new queue. A queue is a first-in-first-out (FIFO) data structure -
  * items are added to the end of the queue and removed from the front.
  */
-export default class Queue<T> {
+export class Queue<T> {
 
   // Initialize the queue and offset
   private queue: T[] = []
@@ -59,5 +59,3 @@ export default class Queue<T> {
 
   }
 }
-
-module.exports = Queue

@@ -4,7 +4,7 @@ import { ExtOptions } from "../ExtOptions"
 /**
  * Controls creation/completion of global statistics object.
  */
-export default {
+export = {
     initStats(options: ExtOptions): InitialStatistics {
         let symlinkStatistics: SymlinkStatistics | undefined = undefined
         if (options.compareSymlink) {

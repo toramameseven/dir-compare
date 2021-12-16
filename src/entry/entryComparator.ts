@@ -4,7 +4,7 @@ import { ExtOptions } from "../ExtOptions"
 /**
  * Determines order criteria for sorting entries in a directory.
  */
-export default {
+export = {
 	compareEntry (a: Entry, b: Entry, options: ExtOptions): number {
 		if (a.isBrokenLink && b.isBrokenLink) {
 			return options.compareNameHandler(a.name, b.name, options)
