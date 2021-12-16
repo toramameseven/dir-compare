@@ -7,7 +7,7 @@ import entryComparator from './entryComparator'
 
 const PATH_SEP = pathUtils.sep
 
-module.exports = {
+export default {
 	/**
 	 * Returns the sorted list of entries in a directory.
 	 */

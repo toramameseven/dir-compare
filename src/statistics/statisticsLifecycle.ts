@@ -1,11 +1,11 @@
-import { BrokenLinksStatistics, PermissionDeniedStatistics, Statistics, SymlinkStatistics } from ".."
+import { BrokenLinksStatistics, InitialStatistics, PermissionDeniedStatistics, Statistics, SymlinkStatistics } from ".."
 import { ExtOptions } from "../ExtOptions"
 
 /**
  * Controls creation/completion of global statistics object.
  */
 export default {
-    initStats(options: ExtOptions): Partial<Statistics> {
+    initStats(options: ExtOptions): InitialStatistics {
         let symlinkStatistics: SymlinkStatistics | undefined = undefined
         if (options.compareSymlink) {
             symlinkStatistics = {
@@ -48,7 +48,9 @@ export default {
         }
     },
 
-    completeStatistics(statistics: Statistics, options: ExtOptions): void {
+    completeStatistics(initialStatistics: InitialStatistics, options: ExtOptions): Statistics {
+        const statistics: Statistics = JSON.parse(JSON.stringify(initialStatistics))
+        
         statistics.differences = statistics.distinct + statistics.left + statistics.right
         statistics.differencesFiles = statistics.distinctFiles + statistics.leftFiles + statistics.rightFiles
         statistics.differencesDirs = statistics.distinctDirs + statistics.leftDirs + statistics.rightDirs
@@ -67,6 +69,8 @@ export default {
                 symlinkStatistics.leftSymlinks + symlinkStatistics.rightSymlinks
             symlinkStatistics.totalSymlinks = symlinkStatistics.differencesSymlinks + symlinkStatistics.equalSymlinks
         }
+
+        return statistics
     }
 
 }

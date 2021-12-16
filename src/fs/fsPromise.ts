@@ -14,7 +14,7 @@ export default {
             })
         })
     },
-    async read(fd: number, buffer: Buffer, offset: number, length: number, position: number): Promise<BytesRead> {
+    async read(fd: number, buffer: Buffer, offset: number, length: number, position: number | null): Promise<BytesRead> {
         return new Promise((resolve, reject) => {
             fs.read(fd, buffer, offset, length, position, (err, bytesRead) => {
                 if (err) {

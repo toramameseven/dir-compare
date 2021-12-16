@@ -202,18 +202,7 @@ export interface Result extends Statistics {
     diffSet?: Array<Difference>
 }
 
-export interface Statistics {
-    /**
-     * Any property is allowed if default result builder is not used.
-     */
-    /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-    [key: string]: any
-
-    /**
-     * True if directories are identical.
-     */
-    same: boolean
-
+export interface InitialStatistics {
     /**
      * Number of distinct entries.
      */
@@ -233,16 +222,6 @@ export interface Statistics {
      * Number of entries only in path2.
      */
     right: number
-
-    /**
-     * Total number of differences (distinct+left+right).
-     */
-    differences: number
-
-    /**
-     * Total number of entries (differences+equal).
-     */
-    total: number
 
     /**
      * Number of distinct files.
@@ -265,16 +244,6 @@ export interface Statistics {
     rightFiles: number
 
     /**
-     * Total number of different files (distinctFiles+leftFiles+rightFiles).
-     */
-    differencesFiles: number
-
-    /**
-     * Total number of files (differencesFiles+equalFiles).
-     */
-    totalFiles: number
-
-    /**
      * Number of distinct directories.
      */
     distinctDirs: number
@@ -295,16 +264,6 @@ export interface Statistics {
     rightDirs: number
 
     /**
-     * Total number of different directories (distinctDirs+leftDirs+rightDirs).
-     */
-    differencesDirs: number
-
-    /**
-     * Total number of directories (differencesDirs+equalDirs).
-     */
-    totalDirs: number
-
-    /**
      * Stats about broken links.
      */
     brokenLinks: BrokenLinksStatistics
@@ -318,6 +277,50 @@ export interface Statistics {
      * Stats about entries that could not be accessed.
      */
     permissionDenied: PermissionDeniedStatistics
+}
+
+export interface Statistics extends InitialStatistics {
+    /**
+     * Any property is allowed if default result builder is not used.
+     */
+    /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
+    [key: string]: any
+
+    /**
+     * True if directories are identical.
+     */
+    same: boolean
+
+    /**
+     * Total number of differences (distinct+left+right).
+     */
+    differences: number
+
+    /**
+     * Total number of entries (differences+equal).
+     */
+    total: number
+
+    /**
+     * Total number of different files (distinctFiles+leftFiles+rightFiles).
+     */
+    differencesFiles: number
+
+    /**
+     * Total number of files (differencesFiles+equalFiles).
+     */
+    totalFiles: number
+
+    /**
+     * Total number of different directories (distinctDirs+leftDirs+rightDirs).
+     */
+    differencesDirs: number
+
+    /**
+     * Total number of directories (differencesDirs+equalDirs).
+     */
+    totalDirs: number
+
 }
 
 export interface BrokenLinksStatistics {
