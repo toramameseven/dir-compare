@@ -6,7 +6,7 @@ const fsPromise = require('./fs/fsPromise')
 const loopDetector = require('./symlink/loopDetector')
 const entryComparator = require('./entry/entryComparator')
 const entryType = require('./entry/entryType')
-const { getPrmissionDenieStateWhenLeftMissing, getPrmissionDenieStateWhenRightMissing, getPermissionDeniedState } = require('./permissions/permissionDeniedState')
+const { getPermissionDeniedStateWhenLeftMissing, getPermissionDeniedStateWhenRightMissing, getPermissionDeniedState } = require('./permissions/permissionDeniedState')
 
 /**
  * Returns the sorted list of entries in a directory.
@@ -117,7 +117,7 @@ function compare(rootEntry1, rootEntry2, level, relativePath, options, statistic
                     }
                 } else {
                     // Left missing
-                    let permissionDeniedState = getPrmissionDenieStateWhenLeftMissing(entry2)
+                    let permissionDeniedState = getPermissionDeniedStateWhenLeftMissing(entry2)
                     options.resultBuilder(undefined, entry2, 'right', level, relativePath, options, statistics, diffSet, undefined, permissionDeniedState)
                     stats.updateStatisticsRight(entry2, type2, permissionDeniedState, statistics, options)
                     i2++
