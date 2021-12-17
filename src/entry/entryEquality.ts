@@ -22,7 +22,7 @@ export = {
     },
 
     // TODO deprecated
-    async isEntryEqualAsync(entry1: Entry, entry2: Entry, type: DifferenceType, diffSet: DiffSet, options: ExtOptions): Promise<FileEqualityPromise> {
+    isEntryEqualAsync(entry1: Entry, entry2: Entry, type: DifferenceType, diffSet: DiffSet, options: ExtOptions): FileEqualityPromise {
         if (type === 'file') {
             return isFileEqualAsync(entry1, entry2, type, diffSet, options)
         }
@@ -88,7 +88,7 @@ async function isFileEqualAsync2(entry1: Entry, entry2: Entry, options: ExtOptio
 
 
 // TODO deprecated
-async function isFileEqualAsync(entry1: Entry, entry2: Entry, type: DifferenceType, diffSet: DiffSet, options: ExtOptions): Promise<FileEqualityPromise> {
+function isFileEqualAsync(entry1: Entry, entry2: Entry, type: DifferenceType, diffSet: DiffSet, options: ExtOptions): FileEqualityPromise {
     if (options.compareSymlink && !isSymlinkEqual(entry1, entry2)) {
         return { same: false, reason: 'different-symlink' }
     }
