@@ -21,7 +21,6 @@ export = {
         throw new Error('Unexpected type ' + type)
     },
 
-    // TODO deprecated
     isEntryEqualAsync(entry1: Entry, entry2: Entry, type: DifferenceType, diffSet: DiffSet, options: ExtOptions): FileEqualityPromise {
         if (type === 'file') {
             return isFileEqualAsync(entry1, entry2, type, diffSet, options)
@@ -35,19 +34,6 @@ export = {
         throw new Error('Unexpected type ' + type)
     },
 
-    // TODO rename
-    async isEntryEqualAsync2(entry1: Entry, entry2: Entry, type: DifferenceType, options: ExtOptions): Promise<FileEquality> {
-        if (type === 'file') {
-            return isFileEqualAsync2(entry1, entry2, options)
-        }
-        if (type === 'directory') {
-            return isDirectoryEqual(entry1, entry2, options)
-        }
-        if (type === 'broken-link') {
-            return isBrokenLinkEqual()
-        }
-        throw new Error('Unexpected type ' + type)
-    },
 }
 
 
@@ -68,26 +54,6 @@ function isFileEqualSync(entry1: Entry, entry2: Entry, options: ExtOptions): Fil
     return { same: true }
 }
 
-// TODO rename
-async function isFileEqualAsync2(entry1: Entry, entry2: Entry, options: ExtOptions): Promise<FileEquality> {
-    if (options.compareSymlink && !isSymlinkEqual(entry1, entry2)) {
-        return { same: false, reason: 'different-symlink' }
-    }
-    if (options.compareSize && entry1.stat.size !== entry2.stat.size) {
-        return { same: false, reason: 'different-size' }
-    }
-    if (options.compareDate && !isDateEqual(entry1.stat.mtime, entry2.stat.mtime, options.dateTolerance)) {
-        return { same: false, reason: 'different-date' }
-    }
-
-    if (options.compareContent && !await options.compareFileAsync(entry1.absolutePath, entry1.stat, entry2.absolutePath, entry2.stat, options)) {
-        return { same: false, reason: 'different-content' }
-    }
-    return { same: true }
-}
-
-
-// TODO deprecated
 function isFileEqualAsync(entry1: Entry, entry2: Entry, type: DifferenceType, diffSet: DiffSet, options: ExtOptions): FileEqualityPromise {
     if (options.compareSymlink && !isSymlinkEqual(entry1, entry2)) {
         return { same: false, reason: 'different-symlink' }
