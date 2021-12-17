@@ -11,6 +11,7 @@ const { getPermissionDeniedStateWhenLeftMissing, getPermissionDeniedStateWhenRig
 /**
  * Returns the sorted list of entries in a directory.
  */
+// TODO remove
 function getEntries(rootEntry, relativePath, loopDetected, options) {
     if (!rootEntry || loopDetected) {
         return Promise.resolve([])
