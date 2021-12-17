@@ -84,14 +84,36 @@ const tests: Test[] = [
 
 type CompareFn = (left: string, right: string, options: Options) => Promise<Result> | Result
 
+const deepCompare = function(obj1, obj2) {
+    const obj1Keys = Object.keys(obj1);
+    const obj2Keys = Object.keys(obj2);
+    const allKeys = new Set([...obj1Keys, ...obj2Keys])
+
+    for (const objKey of allKeys) {
+        if (obj1[objKey] !== obj2[objKey]) {
+            if(typeof obj1[objKey] == "object" && typeof obj2[objKey] == "object") {
+                if(!deepCompare(obj1[objKey], obj2[objKey])) {
+                    console.log(objKey)
+                    return false;
+                }
+            } 
+            else {
+                console.log('y')
+                return false;
+            }
+        }
+    }
+
+    return true;
+};
+
 async function runSingleTest(test: Test, compareFn: CompareFn) {
     const t1 = Date.now()
     const compareResult = await compareFn(test.left, test.right, test.options)
     const t2 = Date.now()
-    const compareResultStr = JSON.stringify(compareResult)
     const duration = (t2 - t1) / 1000
-    const ok = compareResultStr === test.expected
-    const testResult = ok ? `ok ${duration} s` : 'fail - ' + compareResultStr
+    const ok = deepCompare(compareResult, JSON.parse(test.expected))
+    const testResult = ok ? `ok ${duration} s` : 'fail - ' + JSON.stringify(compareResult)
     console.log(`${test.testId} ${test.description}: ${testResult}`)
     if (!ok) {
         process.exit(1)
