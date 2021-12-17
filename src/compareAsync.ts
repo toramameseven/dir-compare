@@ -7,7 +7,7 @@ import loopDetector from './symlink/loopDetector'
 import entryComparator from './entry/entryComparator'
 import entryType from './entry/entryType'
 import { getPermissionDeniedStateWhenLeftMissing, getPermissionDeniedStateWhenRightMissing, getPermissionDeniedState } from './permissions/permissionDeniedState'
-import { DiffSet, InitialStatistics, Statistics } from '.'
+import { DiffSet, Entry, InitialStatistics, Statistics } from '.'
 import { SymlinkCache } from './symlink/types/SymlinkCache'
 import { OptionalEntry } from './types/OptionalEntry'
 import { ExtOptions } from './types/ExtOptions'
@@ -16,7 +16,9 @@ import { ExtOptions } from './types/ExtOptions'
  * Returns the sorted list of entries in a directory.
  */
 // TODO : Use compareSync.getEntries()
-function getEntries(rootEntry: OptionalEntry, relativePath: string, loopDetected: boolean, options: ExtOptions) {
+function getEntries(rootEntry: OptionalEntry, relativePath: string, loopDetected: boolean,
+    options: ExtOptions): Entry[] {
+
     if (!rootEntry || loopDetected) {
         return []
     }
