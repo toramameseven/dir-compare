@@ -1,12 +1,12 @@
-import { DifferenceType, Entry, Options, PermissionDeniedState, Reason, Statistics, SymlinkStatistics } from ".."
-import { ExtOptions } from "../ExtOptions"
+import { DifferenceType, Entry, InitialStatistics, Options, PermissionDeniedState, Reason, SymlinkStatistics } from ".."
+import { ExtOptions } from "../types/ExtOptions"
 
 /**
  * Calculates comparison statistics.
  */
 export = {
     updateStatisticsBoth(entry1: Entry, entry2: Entry, same: boolean, reason: Reason, type: DifferenceType,
-        permissionDeniedState: PermissionDeniedState, statistics: Statistics, options: ExtOptions): void {
+        permissionDeniedState: PermissionDeniedState, statistics: InitialStatistics, options: ExtOptions): void {
 
         same ? statistics.equal++ : statistics.distinct++
         if (type === 'file') {
@@ -40,7 +40,7 @@ export = {
         }
     },
     updateStatisticsLeft(entry1: Entry, type: DifferenceType, permissionDeniedState: PermissionDeniedState,
-        statistics: Statistics, options: ExtOptions): void {
+        statistics: InitialStatistics, options: ExtOptions): void {
 
         statistics.left++
         if (type === 'file') {
@@ -63,7 +63,7 @@ export = {
         }
     },
     updateStatisticsRight(entry2: Entry, type: DifferenceType, permissionDeniedState: PermissionDeniedState,
-        statistics: Statistics, options: Options): void {
+        statistics: InitialStatistics, options: Options): void {
 
         statistics.right++
         if (type === 'file') {

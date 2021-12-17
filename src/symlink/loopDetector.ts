@@ -2,6 +2,7 @@ import fs from 'fs'
 import { Entry } from '..'
 import { SymlinkCache } from './types/SymlinkCache'
 import { RootDirSymlinkCache } from "./types/RootDirSymlinkCache"
+import { OptionalEntry } from '../types/OptionalEntry'
 
 
 
@@ -9,7 +10,7 @@ import { RootDirSymlinkCache } from "./types/RootDirSymlinkCache"
  * Provides symlink loop detection to directory traversal algorithm.
  */
 export = {
-	detectLoop(entry: Entry, symlinkCache: RootDirSymlinkCache): boolean {
+	detectLoop(entry: OptionalEntry, symlinkCache: RootDirSymlinkCache): boolean {
 		if (entry && entry.isSymlink) {
 			const realPath = fs.realpathSync(entry.absolutePath)
 			if (symlinkCache[realPath]) {
@@ -26,7 +27,7 @@ export = {
 		}
 	},
 
-	updateSymlinkCache(symlinkCache: SymlinkCache, rootEntry1: Entry, rootEntry2: Entry,
+	updateSymlinkCache(symlinkCache: SymlinkCache, rootEntry1: OptionalEntry, rootEntry2: OptionalEntry,
 		loopDetected1: boolean, loopDetected2: boolean): void {
 
 		let symlinkCachePath1, symlinkCachePath2

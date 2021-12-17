@@ -1,4 +1,4 @@
-import { ExtOptions } from "../ExtOptions"
+import { ExtOptions } from "../types/ExtOptions"
 
 export = function compareName(name1: string, name2: string, options: ExtOptions): number {
 	if (options.ignoreCase) {

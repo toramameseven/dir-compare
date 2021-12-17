@@ -1,6 +1,6 @@
 import fs from 'fs'
 import { DifferenceType, DiffSet, Entry, Reason } from '..'
-import { ExtOptions } from '../ExtOptions'
+import { ExtOptions } from '../types/ExtOptions'
 import { FileEquality } from './types/FileEquality'
 import { FileEqualityPromise } from './types/FileEqualityPromise'
 import { SamePromise } from './types/SamePromise'

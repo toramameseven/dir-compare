@@ -11,7 +11,7 @@ import statsLifecycle from './statistics/statisticsLifecycle'
 import loopDetector from './symlink/loopDetector'
 import { Options, Result, Statistics, DiffSet } from './types'
 import { FileCompareHandlers } from './FileCompareHandlers'
-import { ExtOptions } from './ExtOptions'
+import { ExtOptions } from './types/ExtOptions'
 
 const ROOT_PATH = pathUtils.sep
 

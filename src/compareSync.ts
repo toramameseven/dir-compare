@@ -1,17 +1,21 @@
-const fs = require('fs')
-const pathUtils = require('path')
-const entryBuilder = require('./entry/entryBuilder')
-const entryEquality = require('./entry/entryEquality')
-const stats = require('./statistics/statisticsUpdate')
-const loopDetector = require('./symlink/loopDetector')
-const entryComparator = require('./entry/entryComparator')
-const entryType = require('./entry/entryType')
-const { getPermissionDeniedStateWhenLeftMissing, getPermissionDeniedStateWhenRightMissing, getPermissionDeniedState } = require('./permissions/permissionDeniedState')
+import fs from 'fs'
+import pathUtils from 'path'
+import entryBuilder from './entry/entryBuilder'
+import entryEquality from './entry/entryEquality'
+import stats from './statistics/statisticsUpdate'
+import loopDetector from './symlink/loopDetector'
+import entryComparator from './entry/entryComparator'
+import entryType from './entry/entryType'
+import { getPermissionDeniedStateWhenLeftMissing, getPermissionDeniedStateWhenRightMissing, getPermissionDeniedState } from './permissions/permissionDeniedState'
+import { DiffSet, InitialStatistics, Statistics } from '.'
+import { SymlinkCache } from './symlink/types/SymlinkCache'
+import { OptionalEntry } from './types/OptionalEntry'
+import { ExtOptions } from './types/ExtOptions'
 
 /**
  * Returns the sorted list of entries in a directory.
  */
-function getEntries(rootEntry, relativePath, loopDetected, options) {
+function getEntries(rootEntry: OptionalEntry, relativePath: string, loopDetected: boolean, options: ExtOptions) {
     if (!rootEntry || loopDetected) {
         return []
     }
@@ -28,7 +32,9 @@ function getEntries(rootEntry, relativePath, loopDetected, options) {
 /**
  * Compares two directories synchronously.
  */
-function compare(rootEntry1, rootEntry2, level, relativePath, options, statistics, diffSet, symlinkCache) {
+export = function compare(rootEntry1: OptionalEntry, rootEntry2: OptionalEntry, level: number, relativePath: string,
+    options: ExtOptions, statistics: InitialStatistics, diffSet: DiffSet, symlinkCache: SymlinkCache): void {
+
     const loopDetected1 = loopDetector.detectLoop(rootEntry1, symlinkCache.dir1)
     const loopDetected2 = loopDetector.detectLoop(rootEntry2, symlinkCache.dir2)
     loopDetector.updateSymlinkCache(symlinkCache, rootEntry1, rootEntry2, loopDetected1, loopDetected2)
@@ -93,7 +99,7 @@ function compare(rootEntry1, rootEntry2, level, relativePath, options, statistic
             }
         } else {
             // Left missing
-            let permissionDeniedState = getPermissionDeniedStateWhenLeftMissing(entry2)
+            const permissionDeniedState = getPermissionDeniedStateWhenLeftMissing(entry2)
             options.resultBuilder(undefined, entry2, "right", level, relativePath, options, statistics, diffSet, undefined, permissionDeniedState)
             stats.updateStatisticsRight(entry2, type2, permissionDeniedState, statistics, options)
             i2++
@@ -104,4 +110,3 @@ function compare(rootEntry1, rootEntry2, level, relativePath, options, statistic
     }
 }
 
-module.exports = compare

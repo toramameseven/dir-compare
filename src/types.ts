@@ -171,9 +171,10 @@ export type ResultBuilder =
         level: number,
         relativePath: string,
         options: Options,
-        statistics: Statistics,
+        statistics: InitialStatistics,
         diffSet: DiffSet | undefined,
-        reason: Reason | undefined
+        reason: Reason | undefined,
+        permissionDeniedState: PermissionDeniedState
     ) => void
 
 export interface Entry {
@@ -203,6 +204,12 @@ export interface Result extends Statistics {
 }
 
 export interface InitialStatistics {
+    /**
+     * Any property is allowed if default result builder is not used.
+     */
+    /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
+    [key: string]: any
+
     /**
      * Number of distinct entries.
      */
@@ -280,11 +287,6 @@ export interface InitialStatistics {
 }
 
 export interface Statistics extends InitialStatistics {
-    /**
-     * Any property is allowed if default result builder is not used.
-     */
-    /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-    [key: string]: any
 
     /**
      * True if directories are identical.

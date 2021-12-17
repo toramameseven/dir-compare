@@ -1,5 +1,5 @@
 import { Entry} from ".."
-import { ExtOptions } from "../ExtOptions"
+import { ExtOptions } from "../types/ExtOptions"
 
 /**
  * Determines order criteria for sorting entries in a directory.
