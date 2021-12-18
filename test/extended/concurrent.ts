@@ -39,7 +39,7 @@ async function main() {
             let failedTests = false
             for (const result of results) {
                 const actual = result.res
-                const ok = deepCompare(actual, expected)
+                const ok = deepCompare(actual, JSON.parse(expected))
                 console.log(`${result.testId} ` + (ok ? 'OK' : `FAIL - ${JSON.stringify(actual)}`))
                 if (!ok) {
                     failedTests = true
