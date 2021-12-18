@@ -1,5 +1,4 @@
 import fs from 'fs'
-import { Entry } from '..'
 import { SymlinkCache } from './types/SymlinkCache'
 import { RootDirSymlinkCache } from "./types/RootDirSymlinkCache"
 import { OptionalEntry } from '../types/OptionalEntry'

@@ -1,4 +1,4 @@
-import { compareSync, compare, Options, fileCompareHandlers, Result } from "../../src"
+import { compare, Options, Result } from "../../src"
 import { deepCompare } from "./deepCompare"
 
 interface Test {
