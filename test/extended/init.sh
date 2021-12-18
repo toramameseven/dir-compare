@@ -1,6 +1,6 @@
 #!/bin/bash
 
-
+CURRENT_DIR=$(dirname "$0")
 if [[ ! 'root' == $(whoami) ]]; then echo 'Run as root.'; exit 1; fi;
 
 #  todo: needed?
@@ -45,6 +45,6 @@ fi
 PERMISSION_DENIED_TEST_FILE=37-perms-test
 PERMISSION_DENIED_TEST_DIR=/tmp/$PERMISSION_DENIED_TEST_FILE
 mkdir -p $PERMISSION_DENIED_TEST_DIR
-tar -xf res/$PERMISSION_DENIED_TEST_FILE.tar -C $PERMISSION_DENIED_TEST_DIR
+tar -xf $CURRENT_DIR/res/$PERMISSION_DENIED_TEST_FILE.tar -C $PERMISSION_DENIED_TEST_DIR
 
 echo Init done
