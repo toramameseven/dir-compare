@@ -200,9 +200,12 @@ export interface Result extends Statistics {
     /**
      * List of changes (present if [[Options.noDiffSet]] is false).
      */
-    diffSet?: Array<Difference>
+    diffSet?: DiffSet
 }
 
+/**
+ * @internal
+ */
 export interface InitialStatistics {
     /**
      * Any property is allowed if default result builder is not used.
