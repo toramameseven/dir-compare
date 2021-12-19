@@ -2,8 +2,9 @@ import fs from 'fs'
 import { DifferenceType, DiffSet, Entry, Reason } from '..'
 import { ExtOptions } from '../types/ExtOptions'
 import { FileEquality } from './types/FileEquality'
-import { FileEqualityPromise } from './types/FileEqualityPromise'
-import { SamePromise } from './types/SamePromise'
+import { FileEqualityAsync } from './types/FileEqualityAsync'
+import { FileEqualityAsync2 } from './types/FileEqualityAsync2'
+
 /**
  * Compares two entries with identical name and type.
  */
@@ -21,7 +22,7 @@ export = {
         throw new Error('Unexpected type ' + type)
     },
 
-    isEntryEqualAsync(entry1: Entry, entry2: Entry, type: DifferenceType, diffSet: DiffSet, options: ExtOptions): FileEqualityPromise {
+    isEntryEqualAsync(entry1: Entry, entry2: Entry, type: DifferenceType, diffSet: DiffSet, options: ExtOptions): FileEqualityAsync {
         if (type === 'file') {
             return isFileEqualAsync(entry1, entry2, type, diffSet, options)
         }
@@ -35,8 +36,6 @@ export = {
     },
 
 }
-
-
 
 function isFileEqualSync(entry1: Entry, entry2: Entry, options: ExtOptions): FileEquality {
     if (options.compareSymlink && !isSymlinkEqual(entry1, entry2)) {
@@ -54,16 +53,18 @@ function isFileEqualSync(entry1: Entry, entry2: Entry, options: ExtOptions): Fil
     return { same: true }
 }
 
-function isFileEqualAsync(entry1: Entry, entry2: Entry, type: DifferenceType, diffSet: DiffSet, options: ExtOptions): FileEqualityPromise {
+function isFileEqualAsync(entry1: Entry, entry2: Entry, type: DifferenceType, diffSet: DiffSet,
+    options: ExtOptions): FileEqualityAsync {
+
     if (options.compareSymlink && !isSymlinkEqual(entry1, entry2)) {
         return { same: false, reason: 'different-symlink' }
     }
     if (options.compareSize && entry1.stat.size !== entry2.stat.size) {
-        return { same: false, samePromise: undefined, reason: 'different-size' }
+        return { same: false, fileEqualityAsyncPromise: undefined, reason: 'different-size' }
     }
 
     if (options.compareDate && !isDateEqual(entry1.stat.mtime, entry2.stat.mtime, options.dateTolerance)) {
-        return { same: false, samePromise: undefined, reason: 'different-date' }
+        return { same: false, fileEqualityAsyncPromise: undefined, reason: 'different-date' }
     }
 
     if (options.compareContent) {
@@ -72,32 +73,35 @@ function isFileEqualAsync(entry1: Entry, entry2: Entry, type: DifferenceType, di
             subDiffSet = []
             diffSet.push(subDiffSet)
         }
-        const samePromise: Promise<SamePromise> = options.compareFileAsync(entry1.absolutePath, entry1.stat, entry2.absolutePath, entry2.stat, options)
+        const samePromise: Promise<FileEqualityAsync2> = options.compareFileAsync(entry1.absolutePath, entry1.stat, entry2.absolutePath, entry2.stat, options)
             .then((comparisonResult) => {
-                let same: boolean | undefined = undefined, error: unknown
-                if (typeof (comparisonResult) === "boolean") {
-                    same = comparisonResult
-                } else {
-                    error = comparisonResult
+                if (typeof (comparisonResult) !== "boolean") {
+                    return {
+                        hasErrors: true,
+                        error: comparisonResult
+                    } as FileEqualityAsync2
                 }
 
+                const same = comparisonResult
                 const reason: Reason = same ? undefined : 'different-content'
 
                 return {
+                    hasErrors: false,
                     entry1, entry2, same,
-                    error, type1: type, type2: type,
+                    type1: type, type2: type,
                     diffSet: subDiffSet,
                     reason
-                }
+                } as FileEqualityAsync2
             })
             .catch((error) => ({
-                error: error
+                hasErrors: true,
+                error
             }))
 
-        return { same: undefined, samePromise }
+        return { same: undefined, fileEqualityAsyncPromise: samePromise }
     }
 
-    return { same: true, samePromise: undefined }
+    return { same: true, fileEqualityAsyncPromise: undefined }
 }
 
 function isDirectoryEqual(entry1: Entry, entry2: Entry, options: ExtOptions): FileEquality {
