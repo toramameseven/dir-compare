@@ -9,7 +9,7 @@ import entryType from './entry/entryType'
 import { getPermissionDeniedStateWhenLeftMissing, getPermissionDeniedStateWhenRightMissing, getPermissionDeniedState } from './permissions/permissionDeniedState'
 import { OptionalEntry } from './types/OptionalEntry'
 import { ExtOptions } from './types/ExtOptions'
-import { DifferenceType, DiffSet, Entry, InitialStatistics } from '.'
+import { DiffSet, Entry, InitialStatistics } from '.'
 import { SymlinkCache } from './symlink/types/SymlinkCache'
 import { FileEqualityAsync } from './entry/types/FileEqualityAsync'
 
@@ -79,16 +79,15 @@ export = function compare(rootEntry1: OptionalEntry, rootEntry2: OptionalEntry, 
 
                     if (permissionDeniedState === "access-ok") {
                         const compareEntryRes = entryEquality.isEntryEqualAsync(entry1, entry2, type1, diffSet, options)
-                        const fileEqualityAsyncPromise = compareEntryRes.fileEqualityAsyncPromise
-                        const same = compareEntryRes.same
-                        if (same !== undefined) {
+                        if (compareEntryRes.isSync) {
                             options.resultBuilder(entry1, entry2,
-                                same ? 'equal' : 'distinct',
+                                compareEntryRes.same ? 'equal' : 'distinct',
                                 level, relativePath, options, statistics, diffSet,
                                 compareEntryRes.reason, permissionDeniedState)
-                            stats.updateStatisticsBoth(entry1, entry2, same, compareEntryRes.reason, type1, permissionDeniedState, statistics, options)
+                            stats.updateStatisticsBoth(entry1, entry2, compareEntryRes.same, compareEntryRes.reason,
+                                type1, permissionDeniedState, statistics, options)
                         } else {
-                            fileEqualityAsyncPromises.push(fileEqualityAsyncPromise as Promise<FileEqualityAsync>)
+                            fileEqualityAsyncPromises.push(compareEntryRes.fileEqualityAsyncPromise)
                         }
                     } else {
                         const state = 'distinct'

@@ -27,10 +27,10 @@ export = {
             return isFileEqualAsync(entry1, entry2, type, diffSet, options)
         }
         if (type === 'directory') {
-            return isDirectoryEqual(entry1, entry2, options)
+            return { isSync: true, ...isDirectoryEqual(entry1, entry2, options) }
         }
         if (type === 'broken-link') {
-            return isBrokenLinkEqual()
+            return { isSync: true, ...isBrokenLinkEqual() }
         }
         throw new Error('Unexpected type ' + type)
     },
@@ -57,14 +57,14 @@ function isFileEqualAsync(entry1: Entry, entry2: Entry, type: DifferenceType, di
     options: ExtOptions): FileEqualityPromise {
 
     if (options.compareSymlink && !isSymlinkEqual(entry1, entry2)) {
-        return { same: false, reason: 'different-symlink' }
+        return { isSync: true, same: false, reason: 'different-symlink' }
     }
     if (options.compareSize && entry1.stat.size !== entry2.stat.size) {
-        return { same: false, fileEqualityAsyncPromise: undefined, reason: 'different-size' }
+        return { isSync: true, same: false, reason: 'different-size' }
     }
 
     if (options.compareDate && !isDateEqual(entry1.stat.mtime, entry2.stat.mtime, options.dateTolerance)) {
-        return { same: false, fileEqualityAsyncPromise: undefined, reason: 'different-date' }
+        return { isSync: true, same: false, reason: 'different-date' }
     }
 
     if (options.compareContent) {
@@ -98,10 +98,10 @@ function isFileEqualAsync(entry1: Entry, entry2: Entry, type: DifferenceType, di
                 error
             }))
 
-        return { same: undefined, fileEqualityAsyncPromise: samePromise }
+        return { isSync: false, fileEqualityAsyncPromise: samePromise }
     }
 
-    return { same: true, fileEqualityAsyncPromise: undefined }
+    return { isSync: true, same: true }
 }
 
 function isDirectoryEqual(entry1: Entry, entry2: Entry, options: ExtOptions): FileEquality {
