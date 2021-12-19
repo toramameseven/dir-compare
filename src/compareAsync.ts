@@ -149,13 +149,12 @@ export = function compare(rootEntry1: OptionalEntry, rootEntry2: OptionalEntry, 
                                 return Promise.reject(fileEqualityAsync.error)
                             }
                             const permissionDeniedState = "access-ok"
-                            options.resultBuilder(fileEqualityAsync.entry1, fileEqualityAsync.entry2,
+                            options.resultBuilder(fileEqualityAsync.context.entry1, fileEqualityAsync.context.entry2,
                                 fileEqualityAsync.same ? 'equal' : 'distinct',
-                                level, relativePath, options, statistics, fileEqualityAsync.diffSet,
+                                level, relativePath, options, statistics, fileEqualityAsync.context.diffSet,
                                 fileEqualityAsync.reason, permissionDeniedState)
-                            stats.updateStatisticsBoth(fileEqualityAsync.entry1, fileEqualityAsync.entry2, fileEqualityAsync.same,
-                                fileEqualityAsync.reason, fileEqualityAsync.type1, permissionDeniedState, statistics, options)
-
+                            stats.updateStatisticsBoth(fileEqualityAsync.context.entry1, fileEqualityAsync.context.entry2, fileEqualityAsync.same,
+                                fileEqualityAsync.reason, fileEqualityAsync.context.type1, permissionDeniedState, statistics, options)
                         }
                     }))
         })

@@ -87,10 +87,12 @@ function isFileEqualAsync(entry1: Entry, entry2: Entry, type: DifferenceType, di
 
                 return {
                     hasErrors: false,
-                    entry1, entry2, same,
-                    type1: type, type2: type,
-                    diffSet: subDiffSet,
-                    reason
+                    same, reason,
+                    context: {
+                        entry1, entry2,
+                        type1: type, type2: type,
+                        diffSet: subDiffSet,
+                    }
                 } as FileEqualityAsync
             })
             .catch((error) => ({

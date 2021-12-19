@@ -8,22 +8,20 @@ export type FileEqualityAsync = FileEqualityAsyncSuccess | FileEqualityAsyncErro
 /**
  * Successful file equality test result.
  */
-// TODO: extract additional information (entry1, diffset, ...) into Context structure.
 type FileEqualityAsyncSuccess = {
     hasErrors: false
-    entry1: Entry;
-    entry2: Entry;
     /**
      * True if files are identical.
      */
-    same: boolean;
-    diffSet: DiffSet;
-    type1: DifferenceType;
-    type2: DifferenceType;
+    same: boolean
     /**
      * Provides reason if files are distinct
      */
-    reason: Reason;
+    reason: Reason
+    /**
+     * Provides comparison context during async operations.
+     */
+    context: FileEqualityAsyncContext
 }
 
 /**
@@ -31,6 +29,13 @@ type FileEqualityAsyncSuccess = {
  */
 type FileEqualityAsyncError = {
     hasErrors: true
-    error: unknown;
+    error: unknown
 }
 
+type FileEqualityAsyncContext = {
+    entry1: Entry
+    entry2: Entry
+    diffSet: DiffSet
+    type1: DifferenceType
+    type2: DifferenceType
+}
