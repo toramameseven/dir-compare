@@ -11,7 +11,7 @@ import { OptionalEntry } from './types/OptionalEntry'
 import { ExtOptions } from './types/ExtOptions'
 import { DifferenceType, DiffSet, Entry, InitialStatistics } from '.'
 import { SymlinkCache } from './symlink/types/SymlinkCache'
-import { FileEqualityAsync2 } from './entry/types/FileEqualityAsync2'
+import { FileEqualityAsync } from './entry/types/FileEqualityAsync'
 
 /**
  * Returns the sorted list of entries in a directory.
@@ -48,7 +48,7 @@ export = function compare(rootEntry1: OptionalEntry, rootEntry2: OptionalEntry, 
             const entries2 = entriesResult[1]
             let i1 = 0, i2 = 0
             const comparePromises: Promise<void>[] = []
-            const fileEqualityAsyncPromises: Promise<FileEqualityAsync2>[] = []
+            const fileEqualityAsyncPromises: Promise<FileEqualityAsync>[] = []
             let subDiffSet
 
             while (i1 < entries1.length || i2 < entries2.length) {
@@ -88,7 +88,7 @@ export = function compare(rootEntry1: OptionalEntry, rootEntry2: OptionalEntry, 
                                 compareEntryRes.reason, permissionDeniedState)
                             stats.updateStatisticsBoth(entry1, entry2, same, compareEntryRes.reason, type1, permissionDeniedState, statistics, options)
                         } else {
-                            fileEqualityAsyncPromises.push(fileEqualityAsyncPromise as Promise<FileEqualityAsync2>)
+                            fileEqualityAsyncPromises.push(fileEqualityAsyncPromise as Promise<FileEqualityAsync>)
                         }
                     } else {
                         const state = 'distinct'

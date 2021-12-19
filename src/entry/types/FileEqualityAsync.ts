@@ -1,8 +1,20 @@
-import { Reason } from "../..";
-import { FileEqualityAsync2 } from "./FileEqualityAsync2";
+import { DifferenceType, DiffSet, Entry, Reason } from "../..";
 
-export type FileEqualityAsync = {
-    same?: boolean;  // TODO refactor conditional typing; also refactor in compareAsync.ts
-    reason?: Reason;
-    fileEqualityAsyncPromise?: Promise<FileEqualityAsync2>;
-};
+export type FileEqualityAsyncSuccess = {
+    hasErrors: false
+    entry1: Entry;
+    entry2: Entry;
+    same: boolean;
+    diffSet: DiffSet;
+    type1: DifferenceType;
+    type2: DifferenceType;
+    reason: Reason;
+}
+
+export type FileEqualityAsyncError = {
+    hasErrors: true
+    error: unknown;
+}
+
+export type FileEqualityAsync = FileEqualityAsyncSuccess | FileEqualityAsyncError
+

@@ -2,8 +2,8 @@ import fs from 'fs'
 import { DifferenceType, DiffSet, Entry, Reason } from '..'
 import { ExtOptions } from '../types/ExtOptions'
 import { FileEquality } from './types/FileEquality'
+import { FileEqualityPromise } from './types/FileEqualityPromise'
 import { FileEqualityAsync } from './types/FileEqualityAsync'
-import { FileEqualityAsync2 } from './types/FileEqualityAsync2'
 
 /**
  * Compares two entries with identical name and type.
@@ -22,7 +22,7 @@ export = {
         throw new Error('Unexpected type ' + type)
     },
 
-    isEntryEqualAsync(entry1: Entry, entry2: Entry, type: DifferenceType, diffSet: DiffSet, options: ExtOptions): FileEqualityAsync {
+    isEntryEqualAsync(entry1: Entry, entry2: Entry, type: DifferenceType, diffSet: DiffSet, options: ExtOptions): FileEqualityPromise {
         if (type === 'file') {
             return isFileEqualAsync(entry1, entry2, type, diffSet, options)
         }
@@ -54,7 +54,7 @@ function isFileEqualSync(entry1: Entry, entry2: Entry, options: ExtOptions): Fil
 }
 
 function isFileEqualAsync(entry1: Entry, entry2: Entry, type: DifferenceType, diffSet: DiffSet,
-    options: ExtOptions): FileEqualityAsync {
+    options: ExtOptions): FileEqualityPromise {
 
     if (options.compareSymlink && !isSymlinkEqual(entry1, entry2)) {
         return { same: false, reason: 'different-symlink' }
@@ -73,13 +73,13 @@ function isFileEqualAsync(entry1: Entry, entry2: Entry, type: DifferenceType, di
             subDiffSet = []
             diffSet.push(subDiffSet)
         }
-        const samePromise: Promise<FileEqualityAsync2> = options.compareFileAsync(entry1.absolutePath, entry1.stat, entry2.absolutePath, entry2.stat, options)
+        const samePromise: Promise<FileEqualityAsync> = options.compareFileAsync(entry1.absolutePath, entry1.stat, entry2.absolutePath, entry2.stat, options)
             .then((comparisonResult) => {
                 if (typeof (comparisonResult) !== "boolean") {
                     return {
                         hasErrors: true,
                         error: comparisonResult
-                    } as FileEqualityAsync2
+                    } as FileEqualityAsync
                 }
 
                 const same = comparisonResult
@@ -91,7 +91,7 @@ function isFileEqualAsync(entry1: Entry, entry2: Entry, type: DifferenceType, di
                     type1: type, type2: type,
                     diffSet: subDiffSet,
                     reason
-                } as FileEqualityAsync2
+                } as FileEqualityAsync
             })
             .catch((error) => ({
                 hasErrors: true,
