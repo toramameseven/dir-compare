@@ -1,6 +1,6 @@
 import fs from 'fs'
 import { DifferenceType, DiffSet, Entry, Reason } from '..'
-import { ExtOptions } from '../types/ExtOptions'
+import { ExtOptions } from '../ExtOptions'
 
 /**
  * Compares two entries with identical name and type.

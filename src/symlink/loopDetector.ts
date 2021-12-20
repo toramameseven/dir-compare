@@ -1,5 +1,5 @@
 import fs from 'fs'
-import { OptionalEntry } from '../types/OptionalEntry'
+import { OptionalEntry } from '../entry/entryType';
 
 export type SymlinkCache = {
 	dir1: RootDirSymlinkCache

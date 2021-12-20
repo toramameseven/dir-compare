@@ -7,7 +7,7 @@ import { lineBasedFileCompare } from './fileCompareHandler/lines/lineBasedFileCo
 import { defaultNameCompare } from './nameCompare/defaultNameCompare'
 import { Options, Result, Statistics, DiffSet } from './types'
 import { FileCompareHandlers } from './FileCompareHandlers'
-import { ExtOptions } from './types/ExtOptions'
+import { ExtOptions } from './ExtOptions'
 import { EntryBuilder } from './entry/entryBuilder'
 import { StatisticsLifecycle } from './statistics/statisticsLifecycle'
 import { LoopDetector } from './symlink/loopDetector'

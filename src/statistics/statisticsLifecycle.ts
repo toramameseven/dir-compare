@@ -1,5 +1,5 @@
 import { BrokenLinksStatistics, InitialStatistics, PermissionDeniedStatistics, Statistics, SymlinkStatistics } from ".."
-import { ExtOptions } from "../types/ExtOptions"
+import { ExtOptions } from "../ExtOptions"
 
 /**
  * Controls creation/completion of global statistics object.

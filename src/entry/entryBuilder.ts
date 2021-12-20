@@ -2,7 +2,7 @@ import fs, { Stats } from 'fs'
 import minimatch from 'minimatch'
 import pathUtils from 'path'
 import { Entry } from '..'
-import { ExtOptions } from '../types/ExtOptions'
+import { ExtOptions } from '../ExtOptions'
 import { EntryComparator } from './entryComparator'
 
 const PATH_SEP = pathUtils.sep

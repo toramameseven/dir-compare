@@ -1,5 +1,5 @@
 import { DifferenceType, Entry, InitialStatistics, Options, PermissionDeniedState, Reason, SymlinkStatistics } from ".."
-import { ExtOptions } from "../types/ExtOptions"
+import { ExtOptions } from "../ExtOptions"
 
 /**
  * Calculates comparison statistics.
