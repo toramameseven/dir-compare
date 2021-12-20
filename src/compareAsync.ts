@@ -33,7 +33,7 @@ function getEntries(rootEntry: OptionalEntry, relativePath: string, loopDetected
 /**
  * Compares two directories asynchronously.
  */
-export = function compare(rootEntry1: OptionalEntry, rootEntry2: OptionalEntry, level: number, relativePath: string,
+export function compareAsync(rootEntry1: OptionalEntry, rootEntry2: OptionalEntry, level: number, relativePath: string,
     options: ExtOptions, statistics: InitialStatistics, diffSet: DiffSet, symlinkCache: SymlinkCache): Promise<void> {
 
     const loopDetected1 = LoopDetector.detectLoop(rootEntry1, symlinkCache.dir1)
@@ -102,7 +102,7 @@ export = function compare(rootEntry1: OptionalEntry, rootEntry2: OptionalEntry, 
                             subDiffSet = []
                             diffSet.push(subDiffSet)
                         }
-                        comparePromises.push(compare(entry1, entry2, level + 1,
+                        comparePromises.push(compareAsync(entry1, entry2, level + 1,
                             pathUtils.join(relativePath, entry1.name),
                             options, statistics, subDiffSet, LoopDetector.cloneSymlinkCache(symlinkCache)))
                     }
@@ -117,7 +117,7 @@ export = function compare(rootEntry1: OptionalEntry, rootEntry2: OptionalEntry, 
                             subDiffSet = []
                             diffSet.push(subDiffSet)
                         }
-                        comparePromises.push(compare(entry1, undefined,
+                        comparePromises.push(compareAsync(entry1, undefined,
                             level + 1,
                             pathUtils.join(relativePath, entry1.name), options, statistics, subDiffSet, LoopDetector.cloneSymlinkCache(symlinkCache)))
                     }
@@ -132,7 +132,7 @@ export = function compare(rootEntry1: OptionalEntry, rootEntry2: OptionalEntry, 
                             subDiffSet = []
                             diffSet.push(subDiffSet)
                         }
-                        comparePromises.push(compare(undefined, entry2,
+                        comparePromises.push(compareAsync(undefined, entry2,
                             level + 1,
                             pathUtils.join(relativePath, entry2.name), options, statistics, subDiffSet, LoopDetector.cloneSymlinkCache(symlinkCache)))
                     }

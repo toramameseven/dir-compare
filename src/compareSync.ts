@@ -33,7 +33,7 @@ function getEntries(rootEntry: OptionalEntry, relativePath: string, loopDetected
 /**
  * Compares two directories synchronously.
  */
-export = function compare(rootEntry1: OptionalEntry, rootEntry2: OptionalEntry, level: number, relativePath: string,
+export function compareSync(rootEntry1: OptionalEntry, rootEntry2: OptionalEntry, level: number, relativePath: string,
     options: ExtOptions, statistics: InitialStatistics, diffSet: DiffSet, symlinkCache: SymlinkCache): void {
 
     const loopDetected1 = LoopDetector.detectLoop(rootEntry1, symlinkCache.dir1)
@@ -87,7 +87,7 @@ export = function compare(rootEntry1: OptionalEntry, rootEntry2: OptionalEntry, 
             i1++
             i2++
             if (!options.skipSubdirs && type1 === 'directory') {
-                compare(entry1, entry2, level + 1, pathUtils.join(relativePath, entry1.name), options, statistics, diffSet, LoopDetector.cloneSymlinkCache(symlinkCache))
+                compareSync(entry1, entry2, level + 1, pathUtils.join(relativePath, entry1.name), options, statistics, diffSet, LoopDetector.cloneSymlinkCache(symlinkCache))
             }
         } else if (cmp < 0) {
             // Right missing
@@ -96,7 +96,7 @@ export = function compare(rootEntry1: OptionalEntry, rootEntry2: OptionalEntry, 
             StatisticsUpdate.updateStatisticsLeft(entry1, type1, permissionDeniedState, statistics, options)
             i1++
             if (type1 === 'directory' && !options.skipSubdirs) {
-                compare(entry1, undefined, level + 1, pathUtils.join(relativePath, entry1.name), options, statistics, diffSet, LoopDetector.cloneSymlinkCache(symlinkCache))
+                compareSync(entry1, undefined, level + 1, pathUtils.join(relativePath, entry1.name), options, statistics, diffSet, LoopDetector.cloneSymlinkCache(symlinkCache))
             }
         } else {
             // Left missing
@@ -105,7 +105,7 @@ export = function compare(rootEntry1: OptionalEntry, rootEntry2: OptionalEntry, 
             StatisticsUpdate.updateStatisticsRight(entry2, type2, permissionDeniedState, statistics, options)
             i2++
             if (type2 === 'directory' && !options.skipSubdirs) {
-                compare(undefined, entry2, level + 1, pathUtils.join(relativePath, entry2.name), options, statistics, diffSet, LoopDetector.cloneSymlinkCache(symlinkCache))
+                compareSync(undefined, entry2, level + 1, pathUtils.join(relativePath, entry2.name), options, statistics, diffSet, LoopDetector.cloneSymlinkCache(symlinkCache))
             }
         }
     }

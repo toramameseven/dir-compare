@@ -1,17 +1,17 @@
 import pathUtils from 'path'
 import fs from 'fs'
-import compareSyncInternal from './compareSync'
-import compareAsyncInternal from './compareAsync'
-import defaultResultBuilderCallback from './resultBuilder/defaultResultBuilderCallback'
+import { compareSync as compareSyncInternal } from './compareSync'
+import { compareAsync as compareAsyncInternal } from './compareAsync'
 import { defaultFileCompare } from './fileCompareHandler/default/defaultFileCompare'
 import { lineBasedFileCompare } from './fileCompareHandler/lines/lineBasedFileCompare'
-import defaultNameCompare from './nameCompare/defaultNameCompare'
+import { defaultNameCompare } from './nameCompare/defaultNameCompare'
 import { Options, Result, Statistics, DiffSet } from './types'
 import { FileCompareHandlers } from './FileCompareHandlers'
 import { ExtOptions } from './types/ExtOptions'
 import { EntryBuilder } from './entry/entryBuilder'
 import { StatisticsLifecycle } from './statistics/statisticsLifecycle'
 import { LoopDetector } from './symlink/loopDetector'
+import { defaultResultBuilderCallback } from './resultBuilder/defaultResultBuilderCallback'
 
 const ROOT_PATH = pathUtils.sep
 
