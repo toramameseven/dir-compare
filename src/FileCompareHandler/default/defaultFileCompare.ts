@@ -1,11 +1,11 @@
 import fs from 'fs'
 import bufferEqual from 'buffer-equal'
-import { FileDescriptorQueue } from '../../fs/FileDescriptorQueue'
-import { BufferPair, BufferPool } from '../../fs/BufferPool'
+import { FileDescriptorQueue } from '../../FS/FileDescriptorQueue'
+import { BufferPair, BufferPool } from '../../FS/BufferPool'
 import { Options } from '../../index'
 import { CompareFileHandler } from '../../types'
-import { FileCloser } from '../../fs/FileCloser'
-import { FsPromise } from '../../fs/FsPromise'
+import { FileCloser } from '../../FS/FileCloser'
+import { FsPromise } from '../../FS/FsPromise'
 
 const MAX_CONCURRENT_FILE_COMPARE = 8
 const BUF_SIZE = 100000
@@ -50,7 +50,7 @@ export const defaultFileCompare: CompareFileHandler = {
     /**
      * Compares two files by content
      */
-    async compareAsync(path1: string, stat1: fs.Stats, path2: string, stat2: fs.Stats, options: Options): Promise<boolean> {
+    compareAsync(path1: string, stat1: fs.Stats, path2: string, stat2: fs.Stats, options: Options): Promise<boolean> {
         let fd1: number | undefined
         let fd2: number | undefined
         let bufferPair: BufferPair | undefined

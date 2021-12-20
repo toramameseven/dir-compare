@@ -1,14 +1,14 @@
 import pathUtils from 'path'
 import { ExtOptions } from './ExtOptions'
 import { DiffSet, Entry, InitialStatistics } from '.'
-import { EntryEquality, FileEqualityAsync } from './entry/EntryEquality'
-import { FsPromise } from './fs/FsPromise'
-import { EntryBuilder } from './entry/EntryBuilder'
-import { LoopDetector, SymlinkCache } from './symlink/LoopDetector'
-import { EntryComparator } from './entry/EntryComparator'
-import { EntryType, OptionalEntry } from './entry/EntryType'
-import { Permission } from './permissions/Permission'
-import { StatisticsUpdate } from './statistics/StatisticsUpdate'
+import { EntryEquality, FileEqualityAsync } from './Entry/EntryEquality'
+import { FsPromise } from './FS/FsPromise'
+import { EntryBuilder } from './Entry/EntryBuilder'
+import { LoopDetector, SymlinkCache } from './Symlink/LoopDetector'
+import { EntryComparator } from './Entry/EntryComparator'
+import { EntryType, OptionalEntry } from './Entry/EntryType'
+import { Permission } from './Permission/Permission'
+import { StatisticsUpdate } from './Statistics/StatisticsUpdate'
 
 /**
  * Returns the sorted list of entries in a directory.

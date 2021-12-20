@@ -3,10 +3,10 @@ import { Options } from '../../index'
 import { LineBasedCompareContext } from './LineBasedCompareContext'
 import { compareLineBatches } from './compare/compareLineBatches'
 import { readBufferedLines } from './lineReader/readBufferedLines'
-import { BufferPair } from '../../fs/BufferPool'
+import { BufferPair } from '../../FS/BufferPool'
 import { LineBatch } from './lineReader/LineBatch'
 import { CompareFileSync } from '../../types'
-import { FileCloser } from '../../fs/FileCloser'
+import { FileCloser } from '../../FS/FileCloser'
 
 const BUF_SIZE = 100000
 
