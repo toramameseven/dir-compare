@@ -9,8 +9,8 @@ import { Options, Result, Statistics, DiffSet } from './types'
 import { FileCompareHandlers } from './FileCompareHandlers'
 import { ExtOptions } from './ExtOptions'
 import { EntryBuilder } from './entry/EntryBuilder'
-import { StatisticsLifecycle } from './statistics/statisticsLifecycle'
-import { LoopDetector } from './symlink/loopDetector'
+import { StatisticsLifecycle } from './statistics/StatisticsLifecycle'
+import { LoopDetector } from './symlink/LoopDetector'
 import { defaultResultBuilderCallback } from './resultBuilder/defaultResultBuilderCallback'
 
 const ROOT_PATH = pathUtils.sep

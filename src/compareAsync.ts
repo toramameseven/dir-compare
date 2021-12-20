@@ -4,11 +4,11 @@ import { DiffSet, Entry, InitialStatistics } from '.'
 import { EntryEquality, FileEqualityAsync } from './entry/EntryEquality'
 import { FsPromise } from './fs/FsPromise'
 import { EntryBuilder } from './entry/EntryBuilder'
-import { LoopDetector, SymlinkCache } from './symlink/loopDetector'
+import { LoopDetector, SymlinkCache } from './symlink/LoopDetector'
 import { EntryComparator } from './entry/EntryComparator'
 import { EntryType, OptionalEntry } from './entry/EntryType'
-import { Permission } from './permissions/permissionDeniedState'
-import { StatisticsUpdate } from './statistics/statisticsUpdate'
+import { Permission } from './permissions/Permission'
+import { StatisticsUpdate } from './statistics/StatisticsUpdate'
 
 /**
  * Returns the sorted list of entries in a directory.
