@@ -7,8 +7,8 @@ import { BufferPool } from '../../fs/BufferPool'
 import { compareLineBatches } from './compare/compareLineBatches'
 import { readBufferedLines } from './lineReader/readBufferedLines'
 import { CompareFileAsync } from '../../types'
-import { CloseFile } from '../../fs/closeFile'
-import { FsPromise } from '../../fs/fsPromise'
+import { FileCloser } from '../../fs/FileCloser'
+import { FsPromise } from '../../fs/FsPromise'
 
 const BUF_SIZE = 100000
 const MAX_CONCURRENT_FILE_COMPARE = 8
@@ -44,7 +44,7 @@ export const lineBasedCompareAsync: CompareFileAsync = async (path1: string, sta
     } finally {
         if (context) {
             bufferPool.freeBuffers(context.buffer)
-            await CloseFile.closeFilesAsync(context.fd1, context.fd2, fdQueue)
+            await FileCloser.closeFilesAsync(context.fd1, context.fd2, fdQueue)
         }
     }
 }

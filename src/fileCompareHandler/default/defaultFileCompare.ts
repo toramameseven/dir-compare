@@ -4,8 +4,8 @@ import { FileDescriptorQueue } from '../../fs/FileDescriptorQueue'
 import { BufferPair, BufferPool } from '../../fs/BufferPool'
 import { Options } from '../../index'
 import { CompareFileHandler } from '../../types'
-import { CloseFile } from '../../fs/closeFile'
-import { FsPromise } from '../../fs/fsPromise'
+import { FileCloser } from '../../fs/FileCloser'
+import { FsPromise } from '../../fs/FsPromise'
 
 const MAX_CONCURRENT_FILE_COMPARE = 8
 const BUF_SIZE = 100000
@@ -41,7 +41,7 @@ export const defaultFileCompare: CompareFileHandler = {
                 }
             }
         } finally {
-            CloseFile.closeFilesSync(fd1, fd2)
+            FileCloser.closeFilesSync(fd1, fd2)
             bufferPool.freeBuffers(bufferPair)
         }
     },
@@ -102,6 +102,6 @@ function finalizeAsync(fd1?: number, fd2?: number, bufferPair?: BufferPair) {
     if (bufferPair) {
         bufferPool.freeBuffers(bufferPair)
     }
-    return CloseFile.closeFilesAsync(fd1, fd2, fdQueue)
+    return FileCloser.closeFilesAsync(fd1, fd2, fdQueue)
 }
 

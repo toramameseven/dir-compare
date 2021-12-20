@@ -6,7 +6,7 @@ import { readBufferedLines } from './lineReader/readBufferedLines'
 import { BufferPair } from '../../fs/BufferPool'
 import { LineBatch } from './lineReader/LineBatch'
 import { CompareFileSync } from '../../types'
-import { CloseFile } from '../../fs/closeFile'
+import { FileCloser } from '../../fs/FileCloser'
 
 const BUF_SIZE = 100000
 
@@ -44,7 +44,7 @@ export const lineBasedCompareSync: CompareFileSync = (path1: string, stat1: fs.S
             context.restLines.restLines2 = compareResult.restLines.restLines2
         }
     } finally {
-        CloseFile.closeFilesSync(context?.fd1, context?.fd2)
+        FileCloser.closeFilesSync(context?.fd1, context?.fd2)
     }
 }
 
