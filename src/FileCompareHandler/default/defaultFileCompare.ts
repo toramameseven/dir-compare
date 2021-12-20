@@ -1,11 +1,11 @@
 import fs from 'fs'
 import bufferEqual from 'buffer-equal'
-import { FileDescriptorQueue } from '../../FS/FileDescriptorQueue'
-import { BufferPair, BufferPool } from '../../FS/BufferPool'
+import { FileDescriptorQueue } from '../../FileSystem/FileDescriptorQueue'
+import { BufferPair, BufferPool } from '../../FileSystem/BufferPool'
 import { Options } from '../../index'
 import { CompareFileHandler } from '../../types'
-import { FileCloser } from '../../FS/FileCloser'
-import { FsPromise } from '../../FS/FsPromise'
+import { FileCloser } from '../../FileSystem/FileCloser'
+import { FsPromise } from '../../FileSystem/FsPromise'
 
 const MAX_CONCURRENT_FILE_COMPARE = 8
 const BUF_SIZE = 100000

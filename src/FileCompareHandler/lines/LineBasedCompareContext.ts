@@ -1,4 +1,4 @@
-import { BufferPair } from '../../FS/BufferPool'
+import { BufferPair } from '../../FileSystem/BufferPool'
 
 interface RestPair {
     rest1: string

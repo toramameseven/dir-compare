@@ -1,14 +1,14 @@
-import { FileDescriptorQueue } from '../../FS/FileDescriptorQueue'
+import { FileDescriptorQueue } from '../../FileSystem/FileDescriptorQueue'
 import fs from 'fs'
 import { Options } from '../../index'
 import { LineBatch } from './lineReader/LineBatch'
 import { LineBasedCompareContext } from './LineBasedCompareContext'
-import { BufferPool } from '../../FS/BufferPool'
+import { BufferPool } from '../../FileSystem/BufferPool'
 import { compareLineBatches } from './compare/compareLineBatches'
 import { readBufferedLines } from './lineReader/readBufferedLines'
 import { CompareFileAsync } from '../../types'
-import { FileCloser } from '../../FS/FileCloser'
-import { FsPromise } from '../../FS/FsPromise'
+import { FileCloser } from '../../FileSystem/FileCloser'
+import { FsPromise } from '../../FileSystem/FsPromise'
 
 const BUF_SIZE = 100000
 const MAX_CONCURRENT_FILE_COMPARE = 8
