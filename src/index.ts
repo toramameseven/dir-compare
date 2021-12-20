@@ -6,12 +6,12 @@ import defaultResultBuilderCallback from './resultBuilder/defaultResultBuilderCa
 import { defaultFileCompare } from './fileCompareHandler/default/defaultFileCompare'
 import { lineBasedFileCompare } from './fileCompareHandler/lines/lineBasedFileCompare'
 import defaultNameCompare from './nameCompare/defaultNameCompare'
-import entryBuilder from './entry/entryBuilder'
-import statsLifecycle from './statistics/statisticsLifecycle'
-import loopDetector from './symlink/loopDetector'
 import { Options, Result, Statistics, DiffSet } from './types'
 import { FileCompareHandlers } from './FileCompareHandlers'
 import { ExtOptions } from './types/ExtOptions'
+import { EntryBuilder } from './entry/entryBuilder'
+import { StatisticsLifecycle } from './statistics/statisticsLifecycle'
+import { LoopDetector } from './symlink/loopDetector'
 
 const ROOT_PATH = pathUtils.sep
 
@@ -33,13 +33,13 @@ export function compareSync(path1: string, path2: string, options?: Options): Re
     if (!extOptions.noDiffSet) {
         diffSet = []
     }
-    const initialStatistics = statsLifecycle.initStats(extOptions)
+    const initialStatistics = StatisticsLifecycle.initStats(extOptions)
     compareSyncInternal(
-        entryBuilder.buildEntry(absolutePath1, path1, pathUtils.basename(absolutePath1), extOptions),
-        entryBuilder.buildEntry(absolutePath2, path2, pathUtils.basename(absolutePath2), extOptions),
-        0, ROOT_PATH, extOptions, initialStatistics, diffSet, loopDetector.initSymlinkCache())
+        EntryBuilder.buildEntry(absolutePath1, path1, pathUtils.basename(absolutePath1), extOptions),
+        EntryBuilder.buildEntry(absolutePath2, path2, pathUtils.basename(absolutePath2), extOptions),
+        0, ROOT_PATH, extOptions, initialStatistics, diffSet, LoopDetector.initSymlinkCache())
 
-    const result: Result = statsLifecycle.completeStatistics(initialStatistics, extOptions)
+    const result: Result = StatisticsLifecycle.completeStatistics(initialStatistics, extOptions)
     result.diffSet = diffSet
 
     return result
@@ -68,13 +68,13 @@ export function compare(path1: string, path2: string, options?: Options): Promis
             if (!extOptions.noDiffSet) {
                 asyncDiffSet = []
             }
-            const initialStatistics = statsLifecycle.initStats(extOptions)
+            const initialStatistics = StatisticsLifecycle.initStats(extOptions)
             return compareAsyncInternal(
-                entryBuilder.buildEntry(absolutePath1, path1, pathUtils.basename(path1), extOptions),
-                entryBuilder.buildEntry(absolutePath2, path2, pathUtils.basename(path2), extOptions),
-                0, ROOT_PATH, extOptions, initialStatistics, asyncDiffSet, loopDetector.initSymlinkCache())
+                EntryBuilder.buildEntry(absolutePath1, path1, pathUtils.basename(path1), extOptions),
+                EntryBuilder.buildEntry(absolutePath2, path2, pathUtils.basename(path2), extOptions),
+                0, ROOT_PATH, extOptions, initialStatistics, asyncDiffSet, LoopDetector.initSymlinkCache())
                 .then(() => {
-                    const result: Result = statsLifecycle.completeStatistics(initialStatistics, extOptions)
+                    const result: Result = StatisticsLifecycle.completeStatistics(initialStatistics, extOptions)
                     if (!extOptions?.noDiffSet) {
                         const diffSet = []
                         rebuildAsyncDiffSet(result, asyncDiffSet, diffSet)

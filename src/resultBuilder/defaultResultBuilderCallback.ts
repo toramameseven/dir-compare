@@ -1,6 +1,6 @@
 import pathUtils from 'path'
 import { DifferenceState, DiffSet, Entry, PermissionDeniedState, Reason, Statistics } from '..'
-import entryType from '../entry/entryType'
+import { EntryType } from '../entry/entryType'
 import { ExtOptions } from '../types/ExtOptions'
 
 export = function (entry1: Entry, entry2: Entry, state: DifferenceState, level: number,
@@ -18,8 +18,8 @@ export = function (entry1: Entry, entry2: Entry, state: DifferenceState, level: 
         name2: entry2 ? entry2.name : undefined,
         state: state,
         permissionDeniedState,
-        type1: entryType.getType(entry1),
-        type2: entryType.getType(entry2),
+        type1: EntryType.getType(entry1),
+        type2: EntryType.getType(entry2),
         level: level,
         size1: entry1 ? entry1.stat.size : undefined,
         size2: entry2 ? entry2.stat.size : undefined,

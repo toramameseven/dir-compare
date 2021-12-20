@@ -1,14 +1,11 @@
 import fs from 'fs'
 import { DifferenceType, DiffSet, Entry, Reason } from '..'
 import { ExtOptions } from '../types/ExtOptions'
-import { FileEquality } from './types/FileEquality'
-import { FileEqualityPromise } from './types/FileEqualityPromise'
-import { FileEqualityAsync } from './types/FileEqualityAsync'
 
 /**
  * Compares two entries with identical name and type.
  */
-export = {
+export const EntryEquality = {
     isEntryEqualSync(entry1: Entry, entry2: Entry, type: DifferenceType, options: ExtOptions): FileEquality {
         if (type === 'file') {
             return isFileEqualSync(entry1, entry2, options)
@@ -35,6 +32,88 @@ export = {
         throw new Error('Unexpected type ' + type)
     },
 
+}
+
+/**
+ * Response given when testing identically named files for equality during synchronous comparison.
+ */
+export type FileEquality = {
+    /**
+     * True if files are identical.
+     */
+    same: boolean
+    /**
+     * Provides reason if files are distinct
+     */
+    reason?: Reason
+}
+
+/**
+* Response given when testing identically named files for equality during asynchronous comparison.
+*/
+export type FileEqualityPromise = FileEqualityPromiseSync | FileEqualityPromiseAsync
+
+/**
+ * Response given when testing identically named files for equality during asynchronous comparison.
+ */
+export type FileEqualityAsync = FileEqualityAsyncSuccess | FileEqualityAsyncError
+
+/**
+* File equality response that represents a promise resolved synchronously (ie. no i/o calls involved).
+*/
+type FileEqualityPromiseSync = {
+    isSync: true
+    /**
+     * True if files are identical.
+     */
+    same: boolean
+    /**
+     * Provides reason if files are distinct.
+     */
+    reason?: Reason
+}
+
+/**
+ * File equality response that represents a promise resolved asynchronously.
+ */
+type FileEqualityPromiseAsync = {
+    isSync: false
+    fileEqualityAsyncPromise: Promise<FileEqualityAsync>
+}
+
+/**
+ * Successful file equality test result.
+ */
+type FileEqualityAsyncSuccess = {
+    hasErrors: false
+    /**
+     * True if files are identical.
+     */
+    same: boolean
+    /**
+     * Provides reason if files are distinct
+     */
+    reason: Reason
+    /**
+     * Provides comparison context during async operations.
+     */
+    context: FileEqualityAsyncContext
+}
+
+/**
+ * Failed file equality test result.
+ */
+type FileEqualityAsyncError = {
+    hasErrors: true
+    error: unknown
+}
+
+type FileEqualityAsyncContext = {
+    entry1: Entry
+    entry2: Entry
+    diffSet: DiffSet
+    type1: DifferenceType
+    type2: DifferenceType
 }
 
 function isFileEqualSync(entry1: Entry, entry2: Entry, options: ExtOptions): FileEquality {

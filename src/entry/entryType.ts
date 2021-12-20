@@ -1,7 +1,7 @@
 import { DifferenceType } from ".."
 import { OptionalEntry } from "../types/OptionalEntry"
 
-export = {
+export const EntryType = {
 	/**
 	 * One of 'missing','file','directory','broken-link'
 	 */
