@@ -5,8 +5,7 @@ import { compareAsync as compareAsyncInternal } from './compareAsync'
 import { defaultFileCompare } from './fileCompareHandler/default/defaultFileCompare'
 import { lineBasedFileCompare } from './fileCompareHandler/lines/lineBasedFileCompare'
 import { defaultNameCompare } from './nameCompare/defaultNameCompare'
-import { Options, Result, Statistics, DiffSet } from './types'
-import { FileCompareHandlers } from './FileCompareHandlers'
+import { Options, Result, Statistics, DiffSet, FileCompareHandlers } from './types'
 import { ExtOptions } from './ExtOptions'
 import { EntryBuilder } from './entry/EntryBuilder'
 import { StatisticsLifecycle } from './statistics/StatisticsLifecycle'
@@ -16,7 +15,6 @@ import { defaultResultBuilderCallback } from './resultBuilder/defaultResultBuild
 const ROOT_PATH = pathUtils.sep
 
 export * from './types'
-export { FileCompareHandlers }
 
 /**
  * Synchronously compares given paths.
