@@ -145,6 +145,9 @@ export interface Options {
     compareNameHandler?: CompareNameHandler
 }
 
+/**
+ * List of differences occurred during comparison.
+ */
 export type DiffSet = Array<Difference>
 
 /**
@@ -198,7 +201,8 @@ export interface Entry {
  */
 export interface Result extends Statistics {
     /**
-     * List of changes (present if [[Options.noDiffSet]] is false).
+     * Detailed list of comparison results.
+     * Present if [[Options.noDiffSet]] is false.
      */
     diffSet?: DiffSet
 }

@@ -1,7 +1,7 @@
 import pathUtils from 'path'
 import fs from 'fs'
 import { compareSync as compareSyncInternal } from './compareSync'
-import { compareAsync as compareAsyncInternal } from './compareAsync'
+import { AsyncDiffSet, compareAsync as compareAsyncInternal } from './compareAsync'
 import { defaultFileCompare } from './FileCompareHandler/default/defaultFileCompare'
 import { lineBasedFileCompare } from './FileCompareHandler/lines/lineBasedFileCompare'
 import { defaultNameCompare } from './NameCompare/defaultNameCompare'
@@ -62,10 +62,7 @@ export function compare(path1: string, path2: string, options?: Options): Promis
         })
         .then(() => {
             const extOptions = prepareOptions(options)
-            let asyncDiffSet
-            if (!extOptions.noDiffSet) {
-                asyncDiffSet = []
-            }
+            const asyncDiffSet: AsyncDiffSet = []
             const initialStatistics = StatisticsLifecycle.initStats(extOptions)
             return compareAsyncInternal(
                 EntryBuilder.buildEntry(absolutePath1, path1, pathUtils.basename(path1), extOptions),
@@ -136,9 +133,9 @@ function prepareOptions(options?: Options): ExtOptions {
 }
 
 
-// Async diffsets are kept into recursive structures.
+// Async DiffSets are kept into recursive structures.
 // This method transforms them into one dimensional arrays.
-function rebuildAsyncDiffSet(statistics: Statistics, asyncDiffSet, diffSet: DiffSet) {
+function rebuildAsyncDiffSet(statistics: Statistics, asyncDiffSet: AsyncDiffSet, diffSet: DiffSet): void {
     asyncDiffSet.forEach(rawDiff => {
         if (!Array.isArray(rawDiff)) {
             diffSet.push(rawDiff)
