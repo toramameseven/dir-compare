@@ -1,5 +1,4 @@
 import fs from 'fs'
-import bufferEqual from 'buffer-equal'
 import { FileDescriptorQueue } from '../../FileSystem/FileDescriptorQueue'
 import { BufferPair, BufferPool } from '../../FileSystem/BufferPool'
 import { Options } from '../../index'
@@ -99,7 +98,7 @@ function compareAsync(path1: string, stat1: fs.Stats, path2: string, stat2: fs.S
 }
 
 function compareBuffers(buf1: Buffer, buf2: Buffer, contentSize: number) {
-    return bufferEqual(buf1.slice(0, contentSize), buf2.slice(0, contentSize))
+    return buf1.slice(0, contentSize).equals(buf2.slice(0, contentSize))
 }
 
 function finalizeAsync(fd1?: number, fd2?: number, bufferPair?: BufferPair) {
