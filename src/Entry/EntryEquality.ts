@@ -1,5 +1,5 @@
 import fs from 'fs'
-import { DifferenceType, DiffSet, Entry, Reason } from '..'
+import { DifferenceType, Entry, Reason } from '..'
 import { AsyncDiffSet } from '../compareAsync'
 import { ExtOptions } from '../ExtOptions'
 
