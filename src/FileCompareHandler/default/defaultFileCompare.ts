@@ -64,11 +64,11 @@ export const defaultFileCompare: CompareFileHandler = {
                 fd2 = fds[1]
                 const buf1 = bufferPair.buf1
                 const buf2 = bufferPair.buf2
-                const compareAsyncInternal = () => Promise.all([
-                    FsPromise.read(fd1 as number, buf1, 0, BUF_SIZE, null),
-                    FsPromise.read(fd2 as number, buf2, 0, BUF_SIZE, null)
-                ])
-                    .then((bufferSizes) => {
+                const compareAsyncInternal = () => {
+                    return Promise.all([
+                        FsPromise.read(fd1 as number, buf1, 0, BUF_SIZE, null),
+                        FsPromise.read(fd2 as number, buf2, 0, BUF_SIZE, null)
+                    ]).then((bufferSizes) => {
                         const size1 = bufferSizes[0]
                         const size2 = bufferSizes[1]
                         if (size1 !== size2) {
@@ -82,6 +82,7 @@ export const defaultFileCompare: CompareFileHandler = {
                             return compareAsyncInternal()
                         }
                     })
+                }
                 return compareAsyncInternal()
             })
             .then(
