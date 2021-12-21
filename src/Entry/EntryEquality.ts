@@ -60,7 +60,8 @@ export type FileEqualityPromise = FileEqualityPromiseSync | FileEqualityPromiseA
 export type FileEqualityAsync = FileEqualityAsyncSuccess | FileEqualityAsyncError
 
 /**
-* File equality response that represents a promise resolved synchronously (ie. no i/o calls involved).
+* File equality response that represents a promise resolved synchronously.
+* This can happen when files are compared by size avoiding async i/o calls.
 */
 type FileEqualityPromiseSync = {
     isSync: true
