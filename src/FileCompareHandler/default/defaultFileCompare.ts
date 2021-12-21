@@ -8,7 +8,7 @@ import { FileCloser } from '../../FileSystem/FileCloser'
 import { FsPromise } from '../../FileSystem/FsPromise'
 
 const MAX_CONCURRENT_FILE_COMPARE = 8
-const BUF_SIZE = 100000
+const BUF_SIZE = 1000000
 const fdQueue = new FileDescriptorQueue(MAX_CONCURRENT_FILE_COMPARE * 2)
 const bufferPool = new BufferPool(BUF_SIZE, MAX_CONCURRENT_FILE_COMPARE)  // fdQueue guarantees there will be no more than MAX_CONCURRENT_FILE_COMPARE async processes accessing the buffers concurrently
 const syncBufferPool = new BufferPool(BUF_SIZE, 2)
