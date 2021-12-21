@@ -79,6 +79,14 @@ const tests: Test[] = [
         right: '/tmp/linux-4.4',
         options: { noDiffSet: true, excludeFilter: '**/crypto/internal', compareContent: true },
         expected: '{"distinct":8542,"equal":46685,"left":792,"right":1755,"distinctFiles":8542,"equalFiles":43160,"leftFiles":750,"rightFiles":1639,"distinctDirs":0,"equalDirs":3525,"leftDirs":42,"rightDirs":116,"brokenLinks":{"leftBrokenLinks":0,"rightBrokenLinks":0,"distinctBrokenLinks":0,"totalBrokenLinks":0},"permissionDenied":{"leftPermissionDenied":0,"rightPermissionDenied":0,"distinctPermissionDenied":0,"totalPermissionDenied":0},"same":false,"differences":11089,"differencesFiles":10931,"differencesDirs":158,"total":57774,"totalFiles":54091,"totalDirs":3683}'
+    },
+    {
+        testId: '008',
+        description: 'compare big files',
+        left: '/tmp/dircompare/big_file',
+        right: '/tmp/dircompare/big_file',
+        options: { noDiffSet: true, compareContent: true },
+        expected: '{"distinct":0,"equal":1,"left":0,"right":0,"distinctFiles":0,"equalFiles":1,"leftFiles":0,"rightFiles":0,"distinctDirs":0,"equalDirs":0,"leftDirs":0,"rightDirs":0,"brokenLinks":{"leftBrokenLinks":0,"rightBrokenLinks":0,"distinctBrokenLinks":0,"totalBrokenLinks":0},"permissionDenied":{"leftPermissionDenied":0,"rightPermissionDenied":0,"distinctPermissionDenied":0,"totalPermissionDenied":0},"differences":0,"differencesFiles":0,"differencesDirs":0,"total":1,"totalFiles":1,"totalDirs":0,"same":true}'
     }
 
 ]

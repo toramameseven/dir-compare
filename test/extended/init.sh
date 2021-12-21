@@ -47,4 +47,7 @@ PERMISSION_DENIED_TEST_DIR=/tmp/$PERMISSION_DENIED_TEST_FILE
 mkdir -p $PERMISSION_DENIED_TEST_DIR
 tar -xf $CURRENT_DIR/res/$PERMISSION_DENIED_TEST_FILE.tar -C $PERMISSION_DENIED_TEST_DIR
 
+# Generate large file
+fallocate -l 5G /tmp/dircompare/big_file
+
 echo Init done
