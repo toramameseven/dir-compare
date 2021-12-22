@@ -11,6 +11,7 @@ import { EntryBuilder } from './Entry/EntryBuilder'
 import { StatisticsLifecycle } from './Statistics/StatisticsLifecycle'
 import { LoopDetector } from './Symlink/LoopDetector'
 import { defaultResultBuilderCallback } from './ResultBuilder/defaultResultBuilderCallback'
+import { fileNameCompare } from './NameCompare/fileNameCompare'
 
 const ROOT_PATH = pathUtils.sep
 
@@ -32,10 +33,13 @@ export function compareSync(path1: string, path2: string, options?: Options): Re
         diffSet = []
     }
     const initialStatistics = StatisticsLifecycle.initStats(extOptions)
+    const entry1 = EntryBuilder.buildEntry(absolutePath1, path1, pathUtils.basename(absolutePath1), extOptions)
+    const entry2 = EntryBuilder.buildEntry(absolutePath2, path2, pathUtils.basename(absolutePath2), extOptions)
+    if(!entry1.isDirectory && !entry2.isDirectory){
+        extOptions.compareNameHandler = fileNameCompare
+    }
     compareSyncInternal(
-        EntryBuilder.buildEntry(absolutePath1, path1, pathUtils.basename(absolutePath1), extOptions),
-        EntryBuilder.buildEntry(absolutePath2, path2, pathUtils.basename(absolutePath2), extOptions),
-        0, ROOT_PATH, extOptions, initialStatistics, diffSet, LoopDetector.initSymlinkCache())
+        entry1, entry2, 0, ROOT_PATH, extOptions, initialStatistics, diffSet, LoopDetector.initSymlinkCache())
 
     const result: Result = StatisticsLifecycle.completeStatistics(initialStatistics, extOptions)
     result.diffSet = diffSet
@@ -107,7 +111,7 @@ const wrapper = {
 
 function prepareOptions(options?: Options): ExtOptions {
     options = options || {}
-    const clone = JSON.parse(JSON.stringify(options))
+    const clone: Options = JSON.parse(JSON.stringify(options))
     clone.resultBuilder = options.resultBuilder
     clone.compareFileSync = options.compareFileSync
     clone.compareFileAsync = options.compareFileAsync
@@ -129,7 +133,7 @@ function prepareOptions(options?: Options): ExtOptions {
     if (isNaN(clone.dateTolerance)) {
         throw new Error('Date tolerance is not a number')
     }
-    return clone
+    return clone as ExtOptions
 }
 
 

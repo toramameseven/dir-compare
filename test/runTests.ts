@@ -128,15 +128,19 @@ function checkStatistics(statistics, test) {
     return true
 }
 
-function getExpected(test) {
+function getExpected(test: Partial<Test>): string {
     if (test.expected) {
         return test.expected.trim()
-    } else {
-        return normalize(fs.readFileSync(__dirname + '/expected/' + test.name + '.txt', 'utf8')).trim()
     }
+    const expectedFilePath = __dirname + '/expected/' + test.name + '.txt'
+    if (!fs.existsSync(expectedFilePath)) {
+        return ''
+    }
+    return normalize(fs.readFileSync(expectedFilePath, 'utf8')).trim()
+
 }
 
-function testSync(test, testDirPath, saveReport, runOptions: Partial<RunOptions>): Promise<void> {
+function testSync(test: Partial<Test>, testDirPath, saveReport, runOptions: Partial<RunOptions>): Promise<void> {
     process.chdir(testDirPath)
     let path1, path2
     if (test.withRelativePath) {
@@ -164,6 +168,11 @@ function testSync(test, testDirPath, saveReport, runOptions: Partial<RunOptions>
             console.log(test.name + ' sync: ' + passed(res, 'sync'))
         })
         .catch(error => {
+            if (test.expectedError && JSON.stringify(error).includes(test.expectedError)) {
+                report(test.name, 'sync', error instanceof Error ? error.stack : error, null, true, saveReport)
+                console.log(test.name + ' sync: ' + passed(true, 'sync'))
+                return
+            }
             report(test.name, 'sync', error instanceof Error ? error.stack : error, null, false, saveReport)
             console.log(test.name + ' sync: ' + passed(false, 'sync') + '. Error: ' + printError(error))
         })

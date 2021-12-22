@@ -21,6 +21,8 @@ export interface Test {
     description: string
     // Expected result.
     expected: string
+    // If defined, specifies substring to be matched against any occurring error.
+    expectedError?: string
     // Left/right dirs will be relative to current process.
     withRelativePath: boolean
     // Options sent to library test.
@@ -1123,6 +1125,65 @@ export function getTests(testDirPath: string): Partial<Test>[] {
                 ignoreExtension: true
             },
             displayOptions: { showAll: true, wholeReport: true, },
+        },
+        ////////////////////////////////////////////////////
+        // File based compare                             //
+        ////////////////////////////////////////////////////
+        {
+            name: 'test014_1', path1: '#48/01/index1.html', path2: '#48/01/index1.html',
+            description: 'should compare two files with same name',
+            options: { compareSize: true, },
+            displayOptions: {},
+        },
+        {
+            name: 'test014_2', path1: '#48/01/index1.html', path2: '#48/01/index2.html',
+            description: 'should compare two files with different name',
+            options: { compareSize: true, },
+            displayOptions: {},
+        },
+        {
+            name: 'test014_3', path1: '#48/01/index1.html', path2: '#48/01/index2.html',
+            description: 'should compare two files by content',
+            options: { compareContent: true, },
+            displayOptions: {},
+        },
+        {
+            name: 'test014_4', path1: '#48/01/index1_symlink.html', path2: '#48/01/index2.html',
+            description: 'should compare one symlink and one file',
+            options: { compareSize: true, },
+            displayOptions: {},
+        },
+        {
+            name: 'test014_5', path1: '#48/01/index1_symlink.html', path2: '#48/01/index2.html',
+            description: 'should compare one symlink and one file by content',
+            options: { compareContent: true, },
+            displayOptions: {},
+        },
+        {
+            name: 'test014_6', path1: '#48/01/index1_symlink.html', path2: '#48/01/index2_symlink.html',
+            description: 'should compare two symlinks pointing to files',
+            options: { compareSize: true, },
+            displayOptions: {},
+        },
+        {
+            name: 'test014_7', path1: '#48/01/index1_symlink.html', path2: '#48/01/index2_symlink.html',
+            description: 'should compare two symlinks pointing to files by content',
+            options: { compareContent: true, },
+            displayOptions: {},
+        },
+        {
+            name: 'test014_8', path1: '#48/01/index1_symlink.html', path2: '#48/01/broken_symlink.html',
+            description: 'should if file is compared with broken symlink',
+            options: { compareSize: true, },
+            displayOptions: {},
+            expectedError: 'ENOENT'
+        },
+        {
+            name: 'test014_9', path1: '#48/01/index1_symlink.html', path2: '#48/01/missing_file',
+            description: 'should if file is compared with missing entry',
+            options: { compareSize: true, },
+            displayOptions: {},
+            expectedError: 'ENOENT'
         },
     ]
     return res
