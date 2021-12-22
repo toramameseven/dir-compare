@@ -49,12 +49,7 @@ function printTimeDiff(expectedDiffMs: number, errThresholdMs: number) {
 }
 
 asyncTest(100, 10, expectedCompareContent, { compareContent: true, noDiffSet: true })
-    .then(() => {
-        return asyncTest(100, 10, expectedCompareSize, { compareSize: true, noDiffSet: true }).catch(error => {
-            console.error(error)
-            process.exit(1)
-        })
-    })
+    .then(() => asyncTest(100, 10, expectedCompareSize, { compareSize: true, noDiffSet: true }))
     .catch(error => {
         console.error(error)
         process.exit(1)
