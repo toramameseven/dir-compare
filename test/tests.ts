@@ -1173,14 +1173,14 @@ export function getTests(testDirPath: string): Partial<Test>[] {
         },
         {
             name: 'test014_8', path1: '#48/01/index1_symlink.html', path2: '#48/01/broken_symlink.html',
-            description: 'should if file is compared with broken symlink',
+            description: 'should fail if file is compared with broken symlink',
             options: { compareSize: true, },
             displayOptions: {},
             expectedError: 'ENOENT'
         },
         {
             name: 'test014_9', path1: '#48/01/index1_symlink.html', path2: '#48/01/missing_file',
-            description: 'should if file is compared with missing entry',
+            description: 'should fail if file is compared with missing entry',
             options: { compareSize: true, },
             displayOptions: {},
             expectedError: 'ENOENT'

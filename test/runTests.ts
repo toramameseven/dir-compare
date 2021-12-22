@@ -221,6 +221,11 @@ function testAsync(test: Partial<Test>, testDirPath, saveReport, runOptions: Par
             console.log(test.name + ' async: ' + passed(res, 'async'))
         })
         .catch(error => {
+            if (test.expectedError && JSON.stringify(error).includes(test.expectedError)) {
+                report(test.name, 'async', error instanceof Error ? error.stack : error, null, true, saveReport)
+                console.log(test.name + ' async: ' + passed(true, 'async'))
+                return
+            }
             report(test.name, 'async', error instanceof Error ? error.stack : error, null, false, saveReport)
             console.log(test.name + ' async: ' + passed(false, 'async') + '. Error: ' + printError(error))
         })
