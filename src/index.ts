@@ -11,7 +11,7 @@ import { EntryBuilder } from './Entry/EntryBuilder'
 import { StatisticsLifecycle } from './Statistics/StatisticsLifecycle'
 import { LoopDetector } from './Symlink/LoopDetector'
 import { defaultResultBuilderCallback } from './ResultBuilder/defaultResultBuilderCallback'
-import { fileBasedCompare } from './NameCompare/fileBasedCompare'
+import { fileBasedNameCompare } from './NameCompare/fileBasedNameCompare'
 
 const ROOT_PATH = pathUtils.sep
 
@@ -124,7 +124,7 @@ function prepareOptions(path1: string, path2: string, options?: Options): ExtOpt
     }
     if (!clone.compareNameHandler) {
         const isFileBasedCompare = isFile(path1) && isFile(path2)
-        clone.compareNameHandler = isFileBasedCompare ? fileBasedCompare : defaultNameCompare
+        clone.compareNameHandler = isFileBasedCompare ? fileBasedNameCompare : defaultNameCompare
     }
     clone.dateTolerance = clone.dateTolerance || 1000
     clone.dateTolerance = Number(clone.dateTolerance)
