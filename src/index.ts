@@ -5,13 +5,13 @@ import { AsyncDiffSet, compareAsync as compareAsyncInternal } from './compareAsy
 import { defaultFileCompare } from './FileCompareHandler/default/defaultFileCompare'
 import { lineBasedFileCompare } from './FileCompareHandler/lines/lineBasedFileCompare'
 import { defaultNameCompare } from './NameCompare/defaultNameCompare'
-import { Options, Result, Statistics, DiffSet, FileCompareHandlers, Entry } from './types'
+import { Options, Result, Statistics, DiffSet, FileCompareHandlers, } from './types'
 import { ExtOptions } from './ExtOptions'
 import { EntryBuilder } from './Entry/EntryBuilder'
 import { StatisticsLifecycle } from './Statistics/StatisticsLifecycle'
 import { LoopDetector } from './Symlink/LoopDetector'
 import { defaultResultBuilderCallback } from './ResultBuilder/defaultResultBuilderCallback'
-import { fileNameCompare } from './NameCompare/fileNameCompare'
+import { fileBasedCompare } from './NameCompare/fileBasedCompare'
 
 const ROOT_PATH = pathUtils.sep
 
@@ -28,16 +28,15 @@ export function compareSync(path1: string, path2: string, options?: Options): Re
     const absolutePath1 = pathUtils.normalize(pathUtils.resolve(fs.realpathSync(path1)))
     const absolutePath2 = pathUtils.normalize(pathUtils.resolve(fs.realpathSync(path2)))
     let diffSet
-    const extOptions = prepareOptions(options)
+    const extOptions = prepareOptions(absolutePath1, absolutePath2, options)
     if (!extOptions.noDiffSet) {
         diffSet = []
     }
     const initialStatistics = StatisticsLifecycle.initStats(extOptions)
-    const entry1 = EntryBuilder.buildEntry(absolutePath1, path1, pathUtils.basename(absolutePath1), extOptions)
-    const entry2 = EntryBuilder.buildEntry(absolutePath2, path2, pathUtils.basename(absolutePath2), extOptions)
-    handleFileBasedCompare(entry1, entry2, extOptions)
     compareSyncInternal(
-        entry1, entry2, 0, ROOT_PATH, extOptions, initialStatistics, diffSet, LoopDetector.initSymlinkCache())
+        EntryBuilder.buildEntry(absolutePath1, path1, pathUtils.basename(absolutePath1), extOptions),
+        EntryBuilder.buildEntry(absolutePath2, path2, pathUtils.basename(absolutePath2), extOptions),
+        0, ROOT_PATH, extOptions, initialStatistics, diffSet, LoopDetector.initSymlinkCache())
 
     const result: Result = StatisticsLifecycle.completeStatistics(initialStatistics, extOptions)
     result.diffSet = diffSet
@@ -63,14 +62,13 @@ export function compare(path1: string, path2: string, options?: Options): Promis
             absolutePath2 = pathUtils.normalize(pathUtils.resolve(realPath2))
         })
         .then(() => {
-            const extOptions = prepareOptions(options)
+            const extOptions = prepareOptions(absolutePath1, absolutePath2, options)
             const asyncDiffSet: AsyncDiffSet = []
             const initialStatistics = StatisticsLifecycle.initStats(extOptions)
-            const entry1 = EntryBuilder.buildEntry(absolutePath1, path1, pathUtils.basename(path1), extOptions)
-            const entry2 = EntryBuilder.buildEntry(absolutePath2, path2, pathUtils.basename(path2), extOptions)
-            handleFileBasedCompare(entry1, entry2, extOptions)
             return compareAsyncInternal(
-                entry1, entry2, 0, ROOT_PATH, extOptions, initialStatistics, asyncDiffSet, LoopDetector.initSymlinkCache())
+                EntryBuilder.buildEntry(absolutePath1, path1, pathUtils.basename(path1), extOptions),
+                EntryBuilder.buildEntry(absolutePath2, path2, pathUtils.basename(path2), extOptions),
+                0, ROOT_PATH, extOptions, initialStatistics, asyncDiffSet, LoopDetector.initSymlinkCache())
                 .then(() => {
                     const result: Result = StatisticsLifecycle.completeStatistics(initialStatistics, extOptions)
                     if (!extOptions?.noDiffSet) {
@@ -108,7 +106,7 @@ const wrapper = {
     }
 }
 
-function prepareOptions(options?: Options): ExtOptions {
+function prepareOptions(path1: string, path2: string, options?: Options): ExtOptions {
     options = options || {}
     const clone: Options = JSON.parse(JSON.stringify(options))
     clone.resultBuilder = options.resultBuilder
@@ -125,7 +123,8 @@ function prepareOptions(options?: Options): ExtOptions {
         clone.compareFileAsync = defaultFileCompare.compareAsync
     }
     if (!clone.compareNameHandler) {
-        clone.compareNameHandler = defaultNameCompare
+        const isFileBasedCompare = isFile(path1) && isFile(path2)
+        clone.compareNameHandler = isFileBasedCompare ? fileBasedCompare : defaultNameCompare
     }
     clone.dateTolerance = clone.dateTolerance || 1000
     clone.dateTolerance = Number(clone.dateTolerance)
@@ -148,8 +147,11 @@ function rebuildAsyncDiffSet(statistics: Statistics, asyncDiffSet: AsyncDiffSet,
     })
 }
 
-function handleFileBasedCompare(entry1: Entry, entry2: Entry, extOptions: ExtOptions) {
-    if (!entry1.isDirectory && !entry2.isDirectory) {
-        extOptions.compareNameHandler = fileNameCompare
+function isFile(path: string): boolean {
+    try {
+        const stat = fs.lstatSync(path);
+        return stat.isFile();
+    } catch (e) {
+        return false;
     }
 }
