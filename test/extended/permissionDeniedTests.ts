@@ -1,4 +1,4 @@
-import { compareSync, compare, Options, Result } from "../../src"
+import { compareSync, compare, Options } from "../../src"
 import print from '../print'
 import Streams from 'memory-streams'
 import { readFileSync } from "fs"

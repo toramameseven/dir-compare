@@ -1,4 +1,4 @@
-import { compareSync, compare, Options, fileCompareHandlers, Result } from "../../src"
+import { compareSync, compare, Options, fileCompareHandlers } from "../../src"
 import path = require('path')
 import { CompareFn } from "./CompareFn"
 
