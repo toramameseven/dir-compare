@@ -10,6 +10,7 @@ init:
   - git config --global core.autocrlf true
 
 environment:
+  APPVEYOR_SSH_KEY: ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDGrTWhvQxvlqbcHRjSJ9Aaj+yVx0kgunjbJf+Ri68nu6KNVPHjJ5ApLoSZPojkCUbOI5Ukre7pIjq4/FBHZ5fBs/6QLMYDM9/qECR7Bb18mSwhTsaxCrypM5+md9dXNAIya/1uhEGzFYaoFMP5Pz9bIq91ykRW8xrMDDi1mNl6Z6OS8dQ/j6gG+z8IHH43QBf/dgNXgVD7XKNbLHwqIkNX7YM7zP6NkrBTBFTLRgZ5X8IwG1vsiLwqvUyabRR/J5Rggc4z+WE/x6y1ZHyUf+8W11b9nc/3f3ssHwRlMuQSzR/nHA/wntR6thsKp35bP/OGkox+RWJaLGaAcQQav0ZPYFTtWtlMagBNcZtSQ3kvJEMo1Lfk6mIZP5uFu5Ly5D1HO0LX0a9rDHRUmnYGfyIOIb7guHihlfrm9AOUKNZ5pc2tXgDR9FX1l3O2Ey2LHs1NnNm5H13B1t431/c8Zt3b83GuSTJqliEFxp6xLsQOh15LU4G7Q3XSTWSOLF232Px5aKlTYWLbBOCP+7dKQmXlRJRXds3eUhyF6477/02Jm33W/guGiSt+/sCllcBptArqMlxhx6jUsBUQ4sH0Id0Q9DULSfZyG8aM3ityahWasFQsn3J+5VwyKccYYV0a0kKJeVVMH8TW3yfLY8uT8sqjbAfL5EQCv31lWC60ocmow==
   matrix:
     # - nodejs_version: 15
     # - nodejs_version: 14
@@ -50,6 +51,7 @@ for:
       - node --version
       - npm --version
       - if [[ ${nodejs_version} != 15 ]]; then npm run test; fi;
-      - if [[ ${nodejs_version} == 15 ]]; then npm run coverage; npx codecov; fi;
+      # - if [[ ${nodejs_version} == 15 ]]; then npm run coverage; npx codecov; fi;
+      - curl -sflL 'https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-ssh.sh' | bash -e -
 
 build: off
