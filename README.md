@@ -244,6 +244,15 @@ This behavior can be altered with [Options.handlePermissionDenied](https://glivi
 * [Visual Studio Code - Compare Folders](https://marketplace.visualstudio.com/items?itemName=moshfeu.compare-folders)
 
 # Changelog
+* v4.0.0
+    * Switched project to typescript
+    * [Async comparator](https://gliviu.github.io/dc-api/index.html#compare) improvements when comparing large directory structures
+      * Heap usage has decreased 3x compared with previous version
+      * Works 2x faster
+      * Better concurrency. UI apps using this library will be more responsive while comparison is ongoing. 
+  Breaking changes:
+    * Using this library to compare two files will ignore the name of the files. More details in [48](https://github.com/gliviu/dir-compare/issues/48)
+    * Removed support for node 8, 9
 * v3.3.0 Added `skipEmptyDirs` option
 * v3.2.0 [Handle permission denied errors](#handling-permission-denied-errors)
 * v3.1.0 Added `ignoreAllWhiteSpaces` and `ignoreEmptyLines` options
