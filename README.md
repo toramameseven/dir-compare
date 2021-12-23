@@ -258,7 +258,7 @@ This behavior can be altered with [Options.handlePermissionDenied](https://glivi
 * v3.2.0 [Handle permission denied errors](#handling-permission-denied-errors)
 * v3.1.0 Added `ignoreAllWhiteSpaces` and `ignoreEmptyLines` options
 * v3.0.0 Moved CLI component into separate project [dir-compare-cli](https://github.com/gliviu/dir-compare-cli)
-* v2.4.0 New option to customize file/folder name comparison
+* v2.4.0 [New option](https://gliviu.github.io/dc-api/interfaces/options.html#comparenamehandler) to customize file/folder name comparison
 * v2.3.0 Fixes
 * v2.1.0 Removed [bluebird](https://github.com/petkaantonov/bluebird/#note) dependency
 * v2.0.0
