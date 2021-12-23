@@ -21,25 +21,25 @@ environment:
     # - nodejs_version: 8
 
 for:
-  # - matrix:
-  #     only:
-  #       - image: Visual Studio 2019
-  #   install:
-  #     - ps: Install-Product node $env:nodejs_version
-  #   test_script:
-  #     - node --version
-  #     - npm --version
-  #     - npm test
+  - matrix:
+      only:
+        - image: Visual Studio 2019
+    install:
+      - ps: Install-Product node $env:nodejs_version
+    test_script:
+      - node --version
+      - npm --version
+      - npm test
 
-  # - matrix:
-  #     only:
-  #       - image: macOS
-  #   install:
-  #     - nvm use $nodejs_version
-  #   test_script:
-  #     - node --version
-  #     - npm --version
-  #     - npm test
+  - matrix:
+      only:
+        - image: macOS
+    install:
+      - nvm use $nodejs_version
+    test_script:
+      - node --version
+      - npm --version
+      - npm test
 
   - matrix:
       only:
