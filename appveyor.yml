@@ -3,9 +3,9 @@ branches:
     - master
     - typescript
 image:
-  - Visual Studio 2019
+  # - Visual Studio 2019
   - Ubuntu
-  - macOS
+  # - macOS
 init:
   - git config --global core.autocrlf true
 
@@ -50,8 +50,12 @@ for:
     test_script:
       - node --version
       - npm --version
-      # - if [[ ${nodejs_version} != 15 ]]; then npm run test; fi;
+      - if [[ ${nodejs_version} != 15 ]]; then npm run test; fi;
       # - if [[ ${nodejs_version} == 15 ]]; then npm run coverage; npx codecov; fi;
-      - curl -sflL 'https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-ssh.sh' | bash -e -
+      # - curl -sflL 'https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-ssh.sh' | bash -e -
+
+on_finish:
+  - sh: export APPVEYOR_SSH_BLOCK=true
+  - sh: curl -sflL 'https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-ssh.sh' | bash -e -
 
 build: off
