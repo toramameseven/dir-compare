@@ -115,8 +115,15 @@ export interface Options {
      * |[/]           |dir2     |dir2     |`distinct`  |  `permission-denied`   |`access-error-right` |  
      * |[/dir2]       |file2    |missing  |`left`      |                        |                     |  
      * 
-     * And [[Result.permissionDenied]] statistics look like - left: 0, right: 1, distinct: 0, total: 1
-     * 
+     * And [[Result.permissionDenied]] statistics look like 
+     * ```json
+     * {
+     *   leftPermissionDenied: 0, 
+     *   rightPermissionDenied: 1, 
+     *   distinctPermissionDenied: 0, 
+     *   totalPermissionDenied: 1
+     * }
+     * ```
      */
     handlePermissionDenied?: boolean
 
