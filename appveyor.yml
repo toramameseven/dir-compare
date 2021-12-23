@@ -3,9 +3,9 @@ branches:
     - master
     - typescript
 image:
-  # - Visual Studio 2019
+  - Visual Studio 2019
   - Ubuntu
-  # - macOS
+  - macOS
 init:
   - git config --global core.autocrlf true
 
