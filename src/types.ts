@@ -158,6 +158,11 @@ export interface Options {
 export type DiffSet = Array<Difference>
 
 /**
+ * @internal
+ */
+export type OptionalDiffSet = DiffSet | undefined
+
+/**
  * Callback for constructing result. Called for each compared entry pair.
  * 
  * Updates 'statistics' and 'diffSet'.

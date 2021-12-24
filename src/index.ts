@@ -5,7 +5,7 @@ import { AsyncDiffSet, compareAsync as compareAsyncInternal } from './compareAsy
 import { defaultFileCompare } from './FileCompareHandler/default/defaultFileCompare'
 import { lineBasedFileCompare } from './FileCompareHandler/lines/lineBasedFileCompare'
 import { defaultNameCompare } from './NameCompare/defaultNameCompare'
-import { Options, Result, Statistics, DiffSet, FileCompareHandlers, } from './types'
+import { Options, Result, Statistics, DiffSet, OptionalDiffSet, FileCompareHandlers, } from './types'
 import { ExtOptions } from './ExtOptions'
 import { EntryBuilder } from './Entry/EntryBuilder'
 import { StatisticsLifecycle } from './Statistics/StatisticsLifecycle'
@@ -27,12 +27,19 @@ export function compareSync(path1: string, path2: string, options?: Options): Re
     // realpathSync() is necessary for loop detection to work properly
     const absolutePath1 = pathUtils.normalize(pathUtils.resolve(fs.realpathSync(path1)))
     const absolutePath2 = pathUtils.normalize(pathUtils.resolve(fs.realpathSync(path2)))
-    let diffSet
-    const extOptions = prepareOptions(absolutePath1, absolutePath2, options)
+    const compareMode = getCompareMode(absolutePath1, absolutePath2)
+    const extOptions = prepareOptions(compareMode, options)
+
+    let diffSet: OptionalDiffSet
     if (!extOptions.noDiffSet) {
         diffSet = []
     }
     const initialStatistics = StatisticsLifecycle.initStats(extOptions)
+
+    if(compareMode==='mixed'){
+        return handleMixedCompare(path1, path2, extOptions, diffSet, initialStatistics)        
+    }
+
     compareSyncInternal(
         EntryBuilder.buildEntry(absolutePath1, path1, pathUtils.basename(absolutePath1), extOptions),
         EntryBuilder.buildEntry(absolutePath2, path2, pathUtils.basename(absolutePath2), extOptions),
@@ -159,4 +166,8 @@ function getCompareMode(path1: string, path2: string): CompareMode {
         return 'files'
     }
     return 'mixed'
+}
+
+function handleMixedCompare(path1: string, path2: string, extOptions: ExtOptions, diffSet: any, initialStatistics: InitialStatistics): Result {
+    throw new Error('Function not implemented.')
 }
