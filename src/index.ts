@@ -106,7 +106,7 @@ const wrapper = {
     }
 }
 
-function prepareOptions(path1: string, path2: string, options?: Options): ExtOptions {
+function prepareOptions(compareMode: CompareMode, options?: Options): ExtOptions {
     options = options || {}
     const clone: Options = JSON.parse(JSON.stringify(options))
     clone.resultBuilder = options.resultBuilder
@@ -123,7 +123,7 @@ function prepareOptions(path1: string, path2: string, options?: Options): ExtOpt
         clone.compareFileAsync = defaultFileCompare.compareAsync
     }
     if (!clone.compareNameHandler) {
-        const isFileBasedCompare = isFile(path1) && isFile(path2)
+        const isFileBasedCompare = compareMode === 'files'
         clone.compareNameHandler = isFileBasedCompare ? fileBasedNameCompare : defaultNameCompare
     }
     clone.dateTolerance = clone.dateTolerance || 1000
@@ -147,11 +147,16 @@ function rebuildAsyncDiffSet(statistics: Statistics, asyncDiffSet: AsyncDiffSet,
     })
 }
 
-function isFile(path: string): boolean {
-    try {
-        const stat = fs.lstatSync(path);
-        return stat.isFile();
-    } catch (e) {
-        return false;
+
+type CompareMode = 'directories' | 'files' | 'mixed'
+function getCompareMode(path1: string, path2: string): CompareMode {
+    const stat1 = fs.lstatSync(path1)
+    const stat2 = fs.lstatSync(path2)
+    if (stat1.isDirectory() && stat2.isDirectory()) {
+        return 'directories'
     }
+    if (stat1.isFile() && stat2.isFile()) {
+        return 'files'
+    }
+    return 'mixed'
 }
