@@ -84,8 +84,8 @@ export function compare(path1: string, path2: string, options?: Options): Promis
                 return result
             }
             return compareAsyncInternal(
-                EntryBuilder.buildEntry(absolutePath1, path1, pathUtils.basename(path1), extOptions),
-                EntryBuilder.buildEntry(absolutePath2, path2, pathUtils.basename(path2), extOptions),
+                EntryBuilder.buildEntry(absolutePath1, path1, pathUtils.basename(absolutePath1), extOptions),
+                EntryBuilder.buildEntry(absolutePath2, path2, pathUtils.basename(absolutePath2), extOptions),
                 0, ROOT_PATH, extOptions, initialStatistics, asyncDiffSet, LoopDetector.initSymlinkCache())
                 .then(() => {
                     const result: Result = StatisticsLifecycle.completeStatistics(initialStatistics, extOptions)
