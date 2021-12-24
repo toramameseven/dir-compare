@@ -5,7 +5,7 @@ import { AsyncDiffSet, compareAsync as compareAsyncInternal } from './compareAsy
 import { defaultFileCompare } from './FileCompareHandler/default/defaultFileCompare'
 import { lineBasedFileCompare } from './FileCompareHandler/lines/lineBasedFileCompare'
 import { defaultNameCompare } from './NameCompare/defaultNameCompare'
-import { Options, Result, Statistics, DiffSet, OptionalDiffSet, FileCompareHandlers, } from './types'
+import { Options, Result, Statistics, InitialStatistics, DiffSet, OptionalDiffSet, FileCompareHandlers, DifferenceType } from './types'
 import { ExtOptions } from './ExtOptions'
 import { EntryBuilder } from './Entry/EntryBuilder'
 import { StatisticsLifecycle } from './Statistics/StatisticsLifecycle'
@@ -27,8 +27,8 @@ export function compareSync(path1: string, path2: string, options?: Options): Re
     // realpathSync() is necessary for loop detection to work properly
     const absolutePath1 = pathUtils.normalize(pathUtils.resolve(fs.realpathSync(path1)))
     const absolutePath2 = pathUtils.normalize(pathUtils.resolve(fs.realpathSync(path2)))
-    const compareMode = getCompareMode(absolutePath1, absolutePath2)
-    const extOptions = prepareOptions(compareMode, options)
+    const compareInfo = getCompareInfo(absolutePath1, absolutePath2)
+    const extOptions = prepareOptions(compareInfo, options)
 
     let diffSet: OptionalDiffSet
     if (!extOptions.noDiffSet) {
@@ -36,14 +36,14 @@ export function compareSync(path1: string, path2: string, options?: Options): Re
     }
     const initialStatistics = StatisticsLifecycle.initStats(extOptions)
 
-    if(compareMode==='mixed'){
-        return handleMixedCompare(path1, path2, extOptions, diffSet, initialStatistics)        
+    if (compareInfo.mode === 'mixed') {
+        handleMixedCompare(path1, path2, diffSet, initialStatistics, compareInfo)
+    } else {
+        compareSyncInternal(
+            EntryBuilder.buildEntry(absolutePath1, path1, pathUtils.basename(absolutePath1), extOptions),
+            EntryBuilder.buildEntry(absolutePath2, path2, pathUtils.basename(absolutePath2), extOptions),
+            0, ROOT_PATH, extOptions, initialStatistics, diffSet, LoopDetector.initSymlinkCache())
     }
-
-    compareSyncInternal(
-        EntryBuilder.buildEntry(absolutePath1, path1, pathUtils.basename(absolutePath1), extOptions),
-        EntryBuilder.buildEntry(absolutePath2, path2, pathUtils.basename(absolutePath2), extOptions),
-        0, ROOT_PATH, extOptions, initialStatistics, diffSet, LoopDetector.initSymlinkCache())
 
     const result: Result = StatisticsLifecycle.completeStatistics(initialStatistics, extOptions)
     result.diffSet = diffSet
@@ -69,9 +69,20 @@ export function compare(path1: string, path2: string, options?: Options): Promis
             absolutePath2 = pathUtils.normalize(pathUtils.resolve(realPath2))
         })
         .then(() => {
-            const extOptions = prepareOptions(absolutePath1, absolutePath2, options)
+            const compareInfo = getCompareInfo(absolutePath1, absolutePath2)
+            const extOptions = prepareOptions(compareInfo, options)
             const asyncDiffSet: AsyncDiffSet = []
             const initialStatistics = StatisticsLifecycle.initStats(extOptions)
+            if (compareInfo.mode === 'mixed') {
+                let diffSet: OptionalDiffSet
+                if (!extOptions?.noDiffSet) {
+                    diffSet = []
+                }
+                handleMixedCompare(absolutePath1, absolutePath2, diffSet, initialStatistics, compareInfo)
+                const result: Result = StatisticsLifecycle.completeStatistics(initialStatistics, extOptions)
+                result.diffSet = diffSet
+                return result
+            }
             return compareAsyncInternal(
                 EntryBuilder.buildEntry(absolutePath1, path1, pathUtils.basename(path1), extOptions),
                 EntryBuilder.buildEntry(absolutePath2, path2, pathUtils.basename(path2), extOptions),
@@ -113,7 +124,7 @@ const wrapper = {
     }
 }
 
-function prepareOptions(compareMode: CompareMode, options?: Options): ExtOptions {
+function prepareOptions(compareInfo: CompareInfo, options?: Options): ExtOptions {
     options = options || {}
     const clone: Options = JSON.parse(JSON.stringify(options))
     clone.resultBuilder = options.resultBuilder
@@ -130,7 +141,7 @@ function prepareOptions(compareMode: CompareMode, options?: Options): ExtOptions
         clone.compareFileAsync = defaultFileCompare.compareAsync
     }
     if (!clone.compareNameHandler) {
-        const isFileBasedCompare = compareMode === 'files'
+        const isFileBasedCompare = compareInfo.mode === 'files'
         clone.compareNameHandler = isFileBasedCompare ? fileBasedNameCompare : defaultNameCompare
     }
     clone.dateTolerance = clone.dateTolerance || 1000
@@ -155,19 +166,74 @@ function rebuildAsyncDiffSet(statistics: Statistics, asyncDiffSet: AsyncDiffSet,
 }
 
 
-type CompareMode = 'directories' | 'files' | 'mixed'
-function getCompareMode(path1: string, path2: string): CompareMode {
+type CompareInfo = {
+    mode: 'directories' | 'files' | 'mixed'
+    type1: DifferenceType
+    type2: DifferenceType
+    size1: number
+    size2: number
+    date1: Date
+    date2: Date
+}
+
+function getCompareInfo(path1: string, path2: string): CompareInfo {
     const stat1 = fs.lstatSync(path1)
     const stat2 = fs.lstatSync(path2)
     if (stat1.isDirectory() && stat2.isDirectory()) {
-        return 'directories'
+        return {
+            mode: 'directories',
+            type1: 'directory',
+            type2: 'directory',
+            size1: stat1.size,
+            size2: stat2.size,
+            date1: stat1.mtime,
+            date2: stat2.mtime,
+        }
     }
     if (stat1.isFile() && stat2.isFile()) {
-        return 'files'
+        return {
+            mode: 'files',
+            type1: 'file',
+            type2: 'file',
+            size1: stat1.size,
+            size2: stat2.size,
+            date1: stat1.mtime,
+            date2: stat2.mtime,
+        }
     }
-    return 'mixed'
+    return {
+        mode: 'mixed',
+        type1: stat1.isFile() ? 'file' : 'directory',
+        type2: stat2.isFile() ? 'file' : 'directory',
+        size1: stat1.size,
+        size2: stat2.size,
+        date1: stat1.mtime,
+        date2: stat2.mtime,
+    }
 }
 
-function handleMixedCompare(path1: string, path2: string, extOptions: ExtOptions, diffSet: any, initialStatistics: InitialStatistics): Result {
-    throw new Error('Function not implemented.')
+function handleMixedCompare(path1: string, path2: string, diffSet: OptionalDiffSet,
+    initialStatistics: InitialStatistics, compareInfo: CompareInfo): void {
+    initialStatistics.distinct = 1
+    initialStatistics.distinctDirs = 1
+    initialStatistics.distinctFiles = 1
+    if (diffSet) {
+        diffSet.push({
+            path1,
+            path2,
+            relativePath: '',
+            name1: pathUtils.basename(path1),
+            name2: pathUtils.basename(path2),
+            state: 'distinct',
+            permissionDeniedState: 'access-ok',
+            type1: compareInfo.type1,
+            type2: compareInfo.type2,
+            level: 0,
+            size1: compareInfo.size1,
+            size2: compareInfo.size2,
+            date1: compareInfo.date1,
+            date2: compareInfo.date2,
+            reason: 'different-content',
+        })
+    }
 }

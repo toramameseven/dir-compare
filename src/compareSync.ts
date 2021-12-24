@@ -1,6 +1,6 @@
 import fs from 'fs'
 import pathUtils from 'path'
-import { DiffSet, Entry, InitialStatistics, OptionalDiffSet } from '.'
+import { Entry, InitialStatistics, OptionalDiffSet } from '.'
 import { ExtOptions } from './ExtOptions'
 import { EntryEquality } from './Entry/EntryEquality'
 import { EntryBuilder } from './Entry/EntryBuilder'
