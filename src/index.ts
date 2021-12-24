@@ -37,7 +37,7 @@ export function compareSync(path1: string, path2: string, options?: Options): Re
     const initialStatistics = StatisticsLifecycle.initStats(extOptions)
 
     if (compareInfo.mode === 'mixed') {
-        handleMixedCompare(path1, path2, diffSet, initialStatistics, compareInfo)
+        compareMixedEntries(absolutePath1, absolutePath2, diffSet, initialStatistics, compareInfo)
     } else {
         compareSyncInternal(
             EntryBuilder.buildEntry(absolutePath1, path1, pathUtils.basename(absolutePath1), extOptions),
@@ -75,10 +75,10 @@ export function compare(path1: string, path2: string, options?: Options): Promis
             const initialStatistics = StatisticsLifecycle.initStats(extOptions)
             if (compareInfo.mode === 'mixed') {
                 let diffSet: OptionalDiffSet
-                if (!extOptions?.noDiffSet) {
+                if (!extOptions.noDiffSet) {
                     diffSet = []
                 }
-                handleMixedCompare(absolutePath1, absolutePath2, diffSet, initialStatistics, compareInfo)
+                compareMixedEntries(absolutePath1, absolutePath2, diffSet, initialStatistics, compareInfo)
                 const result: Result = StatisticsLifecycle.completeStatistics(initialStatistics, extOptions)
                 result.diffSet = diffSet
                 return result
@@ -89,7 +89,7 @@ export function compare(path1: string, path2: string, options?: Options): Promis
                 0, ROOT_PATH, extOptions, initialStatistics, asyncDiffSet, LoopDetector.initSymlinkCache())
                 .then(() => {
                     const result: Result = StatisticsLifecycle.completeStatistics(initialStatistics, extOptions)
-                    if (!extOptions?.noDiffSet) {
+                    if (!extOptions.noDiffSet) {
                         const diffSet = []
                         rebuildAsyncDiffSet(result, asyncDiffSet, diffSet)
                         result.diffSet = diffSet
@@ -212,7 +212,11 @@ function getCompareInfo(path1: string, path2: string): CompareInfo {
     }
 }
 
-function handleMixedCompare(path1: string, path2: string, diffSet: OptionalDiffSet,
+/**
+ * Normally dir-compare is used to compare either two directories or two files.
+ * This method is used when one directory needs to be compared to a file.
+ */
+function compareMixedEntries(path1: string, path2: string, diffSet: OptionalDiffSet,
     initialStatistics: InitialStatistics, compareInfo: CompareInfo): void {
     initialStatistics.distinct = 2
     initialStatistics.distinctDirs = 1
