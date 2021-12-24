@@ -82,19 +82,19 @@ compareSync(path1: string, path2: string, options?: Options): Result
 ```
 More details can be found in the reference documentation:
 * [compare](https://gliviu.github.io/dc-api/index.html#compare)
-* [compareSync](https://gliviu.github.io/dc-api/index.html#comparesync)
+* [compareSync](https://gliviu.github.io/dc-api/index.html#compareSync)
 * [Options](https://gliviu.github.io/dc-api/interfaces/Options.html) 
 * [Result](https://gliviu.github.io/dc-api/interfaces/Result.html)
 
 Common options:
-* [compareSize](https://gliviu.github.io/dc-api/interfaces/Options.html#comparesize)
-* [compareContent](https://gliviu.github.io/dc-api/interfaces/Options.html#comparecontent)
-* [compareDate](https://gliviu.github.io/dc-api/interfaces/Options.html#comparedate) 
-* [excludeFilter](https://gliviu.github.io/dc-api/interfaces/Options.html#excludefilter)
-* [includeFilter](https://gliviu.github.io/dc-api/interfaces/Options.html#includefilter) 
-* [ignoreCase](https://gliviu.github.io/dc-api/interfaces/Options.html#ignorecase) 
-* [skipSubdirs](https://gliviu.github.io/dc-api/interfaces/Options.html#skipsubdirs)
-* [skipEmptyDirs](https://gliviu.github.io/dc-api/interfaces/Options.html#skipemptydirs)
+* [compareSize](https://gliviu.github.io/dc-api/interfaces/Options.html#compareSize)
+* [compareContent](https://gliviu.github.io/dc-api/interfaces/Options.html#compareContent)
+* [compareDate](https://gliviu.github.io/dc-api/interfaces/Options.html#compareDate) 
+* [excludeFilter](https://gliviu.github.io/dc-api/interfaces/Options.html#excludeFilter)
+* [includeFilter](https://gliviu.github.io/dc-api/interfaces/Options.html#includeFilter) 
+* [ignoreCase](https://gliviu.github.io/dc-api/interfaces/Options.html#ignoreCase) 
+* [skipSubdirs](https://gliviu.github.io/dc-api/interfaces/Options.html#skipDubdirs)
+* [skipEmptyDirs](https://gliviu.github.io/dc-api/interfaces/Options.html#skipEmptyDirs)
 
 ##  Glob patterns
 [Minimatch](https://www.npmjs.com/package/minimatch) patterns are used to include/exclude files to be compared.
@@ -237,7 +237,7 @@ If entries are different because of symlinks, `reason` will be `different-symlin
 
 ## Handling permission denied errors
 Unreadable files or directories are normally reported as errors. The comparison will be intrerrupted with an `EACCES` exception.
-This behavior can be altered with [Options.handlePermissionDenied](https://gliviu.github.io/dc-api/interfaces/Options.html#handlepermissiondenied).
+This behavior can be altered with [Options.handlePermissionDenied](https://gliviu.github.io/dc-api/interfaces/Options.html#handlePermissionDenied).
 
 # UI tools
 * [dir-compare-cli](https://github.com/gliviu/dir-compare-cli)
@@ -258,7 +258,7 @@ This behavior can be altered with [Options.handlePermissionDenied](https://glivi
 * v3.2.0 [Handle permission denied errors](#handling-permission-denied-errors)
 * v3.1.0 Added `ignoreAllWhiteSpaces` and `ignoreEmptyLines` options
 * v3.0.0 Moved CLI component into separate project [dir-compare-cli](https://github.com/gliviu/dir-compare-cli)
-* v2.4.0 [New option](https://gliviu.github.io/dc-api/interfaces/Options.html#comparenamehandler) to customize file/folder name comparison
+* v2.4.0 [New option](https://gliviu.github.io/dc-api/interfaces/Options.html#compareNameHandler) to customize file/folder name comparison
 * v2.3.0 Fixes
 * v2.1.0 Removed [bluebird](https://github.com/petkaantonov/bluebird/#note) dependency
 * v2.0.0
