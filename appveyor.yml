@@ -1,7 +1,6 @@
 branches:
   only:
     - master
-    - typescript
 image:
   - Visual Studio 2019
   - Ubuntu
