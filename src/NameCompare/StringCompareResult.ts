@@ -1,1 +1,1 @@
-export type StringCompareResult = 0 | 1 | -1;
+export type StringCompareResult =  -1 | 0 | 1
