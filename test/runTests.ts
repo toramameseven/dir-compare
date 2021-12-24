@@ -158,12 +158,12 @@ function testSync(test: Partial<Test>, testDirPath, saveReport, runOptions: Part
             print(result, writer, test.displayOptions)
             const output = normalize(writer.toString()).trim()
             const expected = getExpected(test)
-            if (runOptions.showResult) {
-                printResult(output, expected)
-            }
             const statisticsCheck = checkStatistics(result, test)
             const validated = runCustomValidator(test, result)
             const res = expected === output && statisticsCheck && validated
+            if (runOptions.showResult) {
+                printResult(output, expected, res)
+            }
             report(test.name, 'sync', output, null, res, saveReport)
             console.log(test.name + ' sync: ' + passed(res, 'sync'))
         })
@@ -210,13 +210,11 @@ function testAsync(test: Partial<Test>, testDirPath, saveReport, runOptions: Par
     return promise
         .then(result => {
             const output = result.output
-
             const expected = getExpected(test)
-
-            if (runOptions.showResult) {
-                printResult(output, expected)
-            }
             const res = expected === output && result.statisticsCheck && result.validated
+            if (runOptions.showResult) {
+                printResult(output, expected, res)
+            }
             report(test.name, 'async', output, null, res, saveReport)
             console.log(test.name + ' async: ' + passed(res, 'async'))
         })
@@ -262,12 +260,12 @@ function endReport(saveReport) {
     }
 }
 
-function printResult(output, expected) {
+function printResult(output, expected, result: boolean) {
     console.log('Actual:')
     console.log(output)
     console.log('Expected:')
     console.log(expected)
-    console.log('Result: ' + (output === expected))
+    console.log('Result: ' + result)
 }
 
 function validatePlatform(test: Partial<Test>) {

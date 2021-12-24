@@ -214,7 +214,7 @@ function getCompareInfo(path1: string, path2: string): CompareInfo {
 
 function handleMixedCompare(path1: string, path2: string, diffSet: OptionalDiffSet,
     initialStatistics: InitialStatistics, compareInfo: CompareInfo): void {
-    initialStatistics.distinct = 1
+    initialStatistics.distinct = 2
     initialStatistics.distinctDirs = 1
     initialStatistics.distinctFiles = 1
     if (diffSet) {
