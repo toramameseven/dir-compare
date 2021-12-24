@@ -137,12 +137,12 @@ export interface Options {
     resultBuilder?: ResultBuilder
 
     /**
-     * File comparison handler. See [Custom file comparators](https://github.com/gliviu/dir-compare#custom-file-content-comparators).
+     * File content comparison handler. See [Custom file comparators](https://github.com/gliviu/dir-compare#custom-file-content-comparators).
      */
     compareFileSync?: CompareFileSync
 
     /**
-     * File comparison handler. See [Custom file comparators](https://github.com/gliviu/dir-compare#custom-file-content-comparators).
+     * File content comparison handler. See [Custom file comparators](https://github.com/gliviu/dir-compare#custom-file-content-comparators).
      */
     compareFileAsync?: CompareFileAsync
 
