@@ -39,6 +39,10 @@ function compareLine(options: Options, line1: string, line2: string): boolean {
         line1 = removeSpaces(line1)
         line2 = removeSpaces(line2)
     }
+    if (options.ignoreContentCase) {
+        line1 = line1.toLowerCase();
+        line2 = line2.toLowerCase();
+    }
     return line1 === line2
 }
 
